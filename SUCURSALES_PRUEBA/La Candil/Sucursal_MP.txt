@@ -1,0 +1,15 @@
+ID_Cuenta = INFORHARD_Vendedor
+
+Usuario = TESTUSER597688501
+
+Contraseña = eqCnovE5Z4
+
+Sucursal-01
+	Nombre = CARNEMISARIA
+		CAJAS = 
+			SIN CAJAS
+
+Sucursal-02
+	Nombre = La Candil
+		CAJAS = 
+			SIN CAJAS

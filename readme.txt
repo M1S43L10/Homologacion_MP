@@ -14,6 +14,7 @@
     CUENTA = INFORHARD_Vendedor
         Usuario = TESTUSER597688501
         Contraseña = eqCnovE5Z4
+        AUTh = APP_USR-3774512295656164-121208-e45df91faddd6fd608de107d1db2971f-1588285685
         User_ID = 1588285685
         Creación de Aplicación VENDEDOR 
             Nombre = PagoQR_INFORHARD_TEST

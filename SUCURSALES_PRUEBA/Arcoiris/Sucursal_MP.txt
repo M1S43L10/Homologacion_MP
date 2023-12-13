@@ -1,0 +1,11 @@
+ID_Cuenta = Vendedor1
+
+Usuario = TESTUSER1252314476
+
+Contraseña = A5OVz6vk1x
+
+Sucursal-01
+	Nombre = Arcoiris
+		CAJAS = 
+			Ca_0101  
+			Ca_0102
