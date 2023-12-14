@@ -13,3 +13,15 @@ Sucursal-02
 	Nombre = La Candil
 		CAJAS = 
 			SIN CAJAS
+
+
+curl -X DELETE \
+      'https://api.mercadopago.com/users/1591564347/stores/SUC001'\
+       -H 'Content-Type: application/json' \
+       -H 'Authorization: Bearer APP_USR-1565317196155188-121407-50ffabee6d8a5c3d0f3c7944b76e1bc1-1591564347' \
+       
+
+
+
+TITOMAX =
+	id = 59033510

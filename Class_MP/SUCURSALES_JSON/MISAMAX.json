@@ -1,0 +1,30 @@
+{
+  "id": "59039298",
+  "name": "MISAMAX",
+  "date_creation": "2023-12-14T14:39:06.904Z",
+  "business_hours": {
+    "monday": [
+      {
+        "open": "08:00",
+        "close": "12:00"
+      }
+    ],
+    "tuesday": [
+      {
+        "open": "08:00",
+        "close": "12:00"
+      }
+    ]
+  },
+  "location": {
+    "address_line": "Piedras 1200, Resistencia, Chaco, Argentina",
+    "reference": "1ER PISO",
+    "latitude": -27.4670561026792,
+    "longitude": -58.98208971308696,
+    "id": "AR-H",
+    "type": "state",
+    "city": "Resistencia",
+    "state_id": "AR-H"
+  },
+  "external_id": "SUC001"
+}

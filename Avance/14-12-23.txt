@@ -1,0 +1,10 @@
+Pude crear una carpeta (Class_MP) en la cual tengo los archivos para General la conexion con la APIs
+
+En el archivo "Conexion_APIs_MP.py" pude inicializar la clase Conexion_Api, y desarrollar varias funciones,
+Crear y eliminar Sucursales:
+    cree un modúlo aparte (direccion.py en el cual esta la funcion para pedir los datos de la sucursal)
+    para crear la sucursal se necesita (Hs abrir, hs cerrar, y nro_sucursal)
+    Una vez que crea la sucursal, retorna un .JSON con la respuesta de la APIs (necesarios para el ID), se guarda en la carpeta SUCURSALES_JSON
+Crear Cajas
+    cree un modúlo aparte (direccion.py en el cual esta la función para pedir los datos de la caja)
+    Una vez que crea la caja, retorna un .JSON con la respuesta de la APIs (necesarios para el ID), se guarda en la carpeta {NombreSUC}_CAJAS_JSON
