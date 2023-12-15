@@ -2,6 +2,9 @@ import requests
 import json
 import os
 from direccion import *
+import tkinter as tk
+from PIL import Image, ImageTk
+from qrcode.main import QRCode
 
 class Conexion_Api:
     def __init__(self, id_user, acess_token):
@@ -113,7 +116,6 @@ class Conexion_Api:
 
 
         response = requests.post(url, headers=hedears, data=json.dumps(POSload))
-
         print(response)
         # Crear la carpeta si no existe
         folder_path = f"{nombre_SUC}_CAJAS_JSON"
@@ -122,6 +124,7 @@ class Conexion_Api:
         # Guardar la respuesta en un archivo JSON en la carpeta
         with open(os.path.join(folder_path, f"{datos_CAJA[3]}.json"), "w") as json_file:
             json.dump(response.json(), json_file, indent=2)
+        
 
         if response.status_code >= 200 and response.status_code < 300:
             print("Creación de Caja EXITOSA")
@@ -144,7 +147,7 @@ class Conexion_Api:
             "items": [
                 {
                 "id": 78123172,
-                "title": "MISAMAX",
+                "title": "CHANGUITO",
                 "currency_id": "ARG",
                 "unit_price": precio,
                 "quantity": 1,
@@ -157,33 +160,92 @@ class Conexion_Api:
         response = requests.post(url, headers=headers, data=json.dumps(payload))
         print(response)
         
-    def crear_orden_dinamico(self, external_pos_id):
-        url  = f"https://api.mercadopago.com/instore/orders/qr/seller/collectors/{self.id_user}/pos/{external_pos_id}/qrs"
+    def crear_orden_dinamico(self, precio ,nombre_SUC, nombre_CAJA):
+
+        # Obtener la ruta del directorio de trabajo actual
+        directorio_de_trabajo = os.getcwd()
+
+        # Ruta relativa de la carpeta "CAJAS_JSON"
+        carpeta_cajas_json = os.path.join(directorio_de_trabajo, f"{nombre_SUC}_CAJAS_JSON")
+
+        # Ruta relativa del archivo "Op_0101" dentro de la carpeta
+        archivo_json = os.path.join(carpeta_cajas_json, f"{nombre_CAJA}.json")
+
+        datos_diccionario = {}
+
+        # Verificar si la carpeta existe
+        if os.path.exists(carpeta_cajas_json):
+            # Verificar si el archivo existe
+            if os.path.isfile(archivo_json):
+                # Abrir el archivo
+                with open(archivo_json, 'r') as archivo:
+                    contenido = archivo.read()
+                    datos_diccionario = json.loads(contenido)
+                    #print(json.dumps(datos_diccionario, indent=4, sort_keys=True))
+            else:
+                print(f"El archivo {archivo_json} no existe.")
+        else:
+            print(f"La carpeta {carpeta_cajas_json} no existe.")
+
+        url  = f"https://api.mercadopago.com/instore/orders/qr/seller/collectors/{self.id_user}/pos/{datos_diccionario["external_id"]}/qrs"
+
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {self.access_token}'
+        }
+
+        pagodata_json = {
+            "cash_out": {
+                "amount": 0
+            },
+            "description": "Purchase description.",
+            "external_reference": "reference_12345",
+            "items": [
+                {
+                "sku_number": "A123K9191938",
+                "category": "marketplace",
+                "title": "CHANGUITO",
+                "description": "This is the Point Mini",
+                "unit_price": precio,
+                "quantity": 1,
+                "unit_measure": "unit",
+                "total_amount": precio
+                },
+            ],
+            "notification_url": "https://www.yourserver.com/notifications",
+            "title": "Product order",
+            "total_amount": precio          
+            }
         
+        response = requests.post(url, headers=headers, data=json.dumps(pagodata_json))
+        # Simula la obtención del código QR (reemplaza esto con tu código real)
+        json_data = response.json()
+        print(json_data)
+        qr_data = json_data['qr_data']
+        print(qr_data)
+
+        # Crear el código QR con un tamaño más pequeño
+        qr = QRCode(version=3, box_size=8.5 , border=2)
+        qr.add_data(str(qr_data))
+        qr.make(fit=True)
+
+        # Crear la imagen del código QR directamente
+        img = qr.make_image(fill_color=(0, 0, 0), back_color=(255, 255, 255))
+
+        # Crear una ventana Tkinter con un tamaño más pequeño
+        ventana = tk.Tk()
+        ventana.title("Código QR")
+
+        # Convertir la imagen del código QR a un objeto PhotoImage de Tkinter
+        imagen_tk = ImageTk.PhotoImage(img)
+
+        # Crear un widget Label para mostrar la imagen
+        etiqueta = tk.Label(ventana, image=imagen_tk)
+        etiqueta.pack(padx=5, pady=5)  # Ajusta el espacio alrededor de la imagen
+
+        # Establecer el tamaño de la ventana
+        ventana.geometry("400x400")  # Ajusta el tamaño de la ventana según tus necesidades
+
+        # Ejecutar el bucle de eventos de Tkinter
+        ventana.mainloop()
         
-"""curl -X POST \
-      'https://api.mercadopago.com/instore/orders/qr/seller/collectors/1588285685/pos/SUC001POS001/qrs'\
-       -H 'Content-Type: application/json' \
-       -H 'Authorization: Bearer APP_USR-3774512295656164-121208-e45df91faddd6fd608de107d1db2971f-1588285685' \
-       -d '{
-  "cash_out": {
-    "amount": 0
-  },
-  "description": "Purchase description.",
-  "external_reference": "reference_12345",
-  "items": [
-    {
-      "sku_number": "A123K9191938",
-      "category": "marketplace",
-      "title": "Verduras",
-      "description": "This is the Point Mini",
-      "unit_price": 100,
-      "quantity": 2,
-      "unit_measure": "unit",
-      "total_amount": 200
-    }
-  ],
-  "notification_url": "https://www.yourserver.com/notifications",
-  "title": "Product order",
-  "total_amount": 200
-}'"""

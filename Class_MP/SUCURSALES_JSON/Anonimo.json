@@ -1,0 +1,30 @@
+{
+  "id": "59055478",
+  "name": "Anonimo",
+  "date_creation": "2023-12-15T14:24:44.984Z",
+  "business_hours": {
+    "monday": [
+      {
+        "open": "08:00",
+        "close": "13:00"
+      }
+    ],
+    "tuesday": [
+      {
+        "open": "08:00",
+        "close": "13:00"
+      }
+    ]
+  },
+  "location": {
+    "address_line": "Maip\u00fa 510, Resistencia, Chaco, Argentina",
+    "reference": "Esquina",
+    "latitude": -27.45449845720429,
+    "longitude": -59.01476804227396,
+    "id": "AR-H",
+    "type": "state",
+    "city": "Resistencia",
+    "state_id": "AR-H"
+  },
+  "external_id": "SUC002"
+}
