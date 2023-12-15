@@ -187,7 +187,7 @@ class Conexion_Api:
         else:
             print(f"La carpeta {carpeta_cajas_json} no existe.")
 
-        url  = f"https://api.mercadopago.com/instore/orders/qr/seller/collectors/{self.id_user}/pos/{datos_diccionario["external_id"]}/qrs"
+        url = f"https://api.mercadopago.com/instore/orders/qr/seller/collectors/{self.id_user}/pos/{datos_diccionario['external_id']}/qrs"
 
         headers = {
             'Content-Type': 'application/json',
@@ -204,8 +204,8 @@ class Conexion_Api:
                 {
                 "sku_number": "A123K9191938",
                 "category": "marketplace",
-                "title": "CHANGUITO",
-                "description": "This is the Point Mini",
+                "title": "ANONIMO",
+                "description": "SUPERMERCADO",
                 "unit_price": precio,
                 "quantity": 1,
                 "unit_measure": "unit",
@@ -218,34 +218,4 @@ class Conexion_Api:
             }
         
         response = requests.post(url, headers=headers, data=json.dumps(pagodata_json))
-        # Simula la obtención del código QR (reemplaza esto con tu código real)
-        json_data = response.json()
-        print(json_data)
-        qr_data = json_data['qr_data']
-        print(qr_data)
-
-        # Crear el código QR con un tamaño más pequeño
-        qr = QRCode(version=3, box_size=8.5 , border=2)
-        qr.add_data(str(qr_data))
-        qr.make(fit=True)
-
-        # Crear la imagen del código QR directamente
-        img = qr.make_image(fill_color=(0, 0, 0), back_color=(255, 255, 255))
-
-        # Crear una ventana Tkinter con un tamaño más pequeño
-        ventana = tk.Tk()
-        ventana.title("Código QR")
-
-        # Convertir la imagen del código QR a un objeto PhotoImage de Tkinter
-        imagen_tk = ImageTk.PhotoImage(img)
-
-        # Crear un widget Label para mostrar la imagen
-        etiqueta = tk.Label(ventana, image=imagen_tk)
-        etiqueta.pack(padx=5, pady=5)  # Ajusta el espacio alrededor de la imagen
-
-        # Establecer el tamaño de la ventana
-        ventana.geometry("400x400")  # Ajusta el tamaño de la ventana según tus necesidades
-
-        # Ejecutar el bucle de eventos de Tkinter
-        ventana.mainloop()
-        
+        return response   
