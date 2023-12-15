@@ -1,7 +1,7 @@
 import requests
 import json
 import os
-from direccion import direccion_suc, datos_caja
+from direccion import *
 
 class Conexion_Api:
     def __init__(self, id_user, acess_token):
@@ -127,3 +127,63 @@ class Conexion_Api:
             print("Creación de Caja EXITOSA")
         else:
             print("No se logró la Conexión.")
+            
+    #def eliminar_caja(self):
+    
+    def crear_orden(self, precio, external_id):
+        
+        url = f"https://api.mercadopago.com/mpmobile/instore/qr/{self.id_user}/{external_id}"
+        
+        headers = {
+            'Content-Type': 'application/json',
+            'X-Ttl-Store-Preference': "180" ,
+            'Authorization': f'Bearer {self.access_token}'
+        }
+        payload = {
+            "external_reference": "Factura-0001",
+            "items": [
+                {
+                "id": 78123172,
+                "title": "MISAMAX",
+                "currency_id": "ARG",
+                "unit_price": precio,
+                "quantity": 1,
+                "description": "MERCADERIAS",
+                "picture_url": "https://previews.123rf.com/images/freaktor/freaktor2002/freaktor200200004/139383340-verduras-en-carro-de-compras-carro-supermercado-logo-icono-dise%C3%B1o-vector.jpg"
+                },
+            ]
+            }
+        
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        print(response)
+        
+    def crear_orden_dinamico(self, external_pos_id):
+        url  = f"https://api.mercadopago.com/instore/orders/qr/seller/collectors/{self.id_user}/pos/{external_pos_id}/qrs"
+        
+        
+"""curl -X POST \
+      'https://api.mercadopago.com/instore/orders/qr/seller/collectors/1588285685/pos/SUC001POS001/qrs'\
+       -H 'Content-Type: application/json' \
+       -H 'Authorization: Bearer APP_USR-3774512295656164-121208-e45df91faddd6fd608de107d1db2971f-1588285685' \
+       -d '{
+  "cash_out": {
+    "amount": 0
+  },
+  "description": "Purchase description.",
+  "external_reference": "reference_12345",
+  "items": [
+    {
+      "sku_number": "A123K9191938",
+      "category": "marketplace",
+      "title": "Verduras",
+      "description": "This is the Point Mini",
+      "unit_price": 100,
+      "quantity": 2,
+      "unit_measure": "unit",
+      "total_amount": 200
+    }
+  ],
+  "notification_url": "https://www.yourserver.com/notifications",
+  "title": "Product order",
+  "total_amount": 200
+}'"""

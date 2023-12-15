@@ -1,0 +1,21 @@
+{
+  "id": 91913031,
+  "qr": {
+    "image": "https://www.mercadopago.com/instore/merchant/qr/91913031/0917516a62674827a44eab494b543bc1e8a4f58fae0a45e2839d16aa93f06615.png",
+    "template_document": "https://www.mercadopago.com/instore/merchant/qr/91913031/template_0917516a62674827a44eab494b543bc1e8a4f58fae0a45e2839d16aa93f06615.pdf",
+    "template_image": "https://www.mercadopago.com/instore/merchant/qr/91913031/template_0917516a62674827a44eab494b543bc1e8a4f58fae0a45e2839d16aa93f06615.png"
+  },
+  "status": "active",
+  "date_created": "2023-12-14T21:42:46.000-04:00",
+  "date_last_updated": "2023-12-14T21:42:46.000-04:00",
+  "uuid": "0917516a62674827a44eab494b543bc1e8a4f58fae0a45e2839d16aa93f06615",
+  "user_id": 1588285685,
+  "name": "Op_0101",
+  "fixed_amount": true,
+  "category": 621102,
+  "store_id": "58686817",
+  "external_store_id": "SUC001",
+  "external_id": "SUC001POS001",
+  "site": "MLA",
+  "qr_code": "00020101021143530016com.mercadolibre0129https://mpago.la/pos/919130315011000711111115204970053030325802AR5909Test Test6004CABA630465BA"
+}
