@@ -2,9 +2,6 @@ import requests
 import json
 import os
 from direccion import *
-import tkinter as tk
-from PIL import Image, ImageTk
-from qrcode.main import QRCode
 
 class Conexion_Api:
     def __init__(self, id_user, acess_token):
@@ -129,7 +126,7 @@ class Conexion_Api:
         if response.status_code >= 200 and response.status_code < 300:
             print("Creación de Caja EXITOSA")
         else:
-            print("No se logró la Conexión.")
+            print(f"No se logró la Conexión. ERROR {response.status_code} \t\n {response}")
             
     #def eliminar_caja(self):
     

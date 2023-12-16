@@ -1,6 +1,6 @@
 import tkinter as tk
-from tkinter import simpledialog, messagebox
-from PIL import Image, ImageTk
+from tkinter import simpledialog
+from PIL import  ImageTk
 from qrcode.main import QRCode
 from Conexion_APIs_MP import Conexion_Api
 
