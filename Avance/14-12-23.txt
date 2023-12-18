@@ -8,3 +8,30 @@ Crear y eliminar Sucursales:
 Crear Cajas
     cree un modúlo aparte (direccion.py en el cual esta la función para pedir los datos de la caja)
     Una vez que crea la caja, retorna un .JSON con la respuesta de la APIs (necesarios para el ID), se guarda en la carpeta {NombreSUC}_CAJAS_JSON
+
+"""curl -X POST \
+      'https://api.mercadopago.com/instore/orders/qr/seller/collectors/1588285685/pos/SUC001POS001/qrs'\
+       -H 'Content-Type: application/json' \
+       -H 'Authorization: Bearer APP_USR-3774512295656164-121208-e45df91faddd6fd608de107d1db2971f-1588285685' \
+       -d '{
+  "cash_out": {
+    "amount": 0
+  },
+  "description": "Purchase description.",
+  "external_reference": "reference_12345",
+  "items": [
+    {
+      "sku_number": "A123K9191938",
+      "category": "marketplace",
+      "title": "Verduras",
+      "description": "This is the Point Mini",
+      "unit_price": 100,
+      "quantity": 2,
+      "unit_measure": "unit",
+      "total_amount": 200
+    }
+  ],
+  "notification_url": "https://www.yourserver.com/notifications",
+  "title": "Product order",
+  "total_amount": 200
+}'"""

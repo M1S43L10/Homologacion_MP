@@ -1,9 +1,8 @@
-import pymysql
+import pypyodbc
 
-class ConexionMySQL:
+class ConexionSybase:
     def __init__(self, **kwargs):
-        self.conector = pymysql.connect(**kwargs)
-        self.host = kwargs["host"]
+        self.conector = pypyodbc.connect(**kwargs)
         self.usuario = kwargs["user"]
         self.contrasena = kwargs["password"]
         self.base_datos = kwargs["database"]
@@ -12,38 +11,42 @@ class ConexionMySQL:
 
     def conectar(self):
         try:
-            self.conexion = pymysql.connect(
-                host=self.host,
+            self.conexion = pypyodbc.connect(
                 user=self.usuario,
                 password=self.contrasena,
-                database=self.base_datos
+                database=self.base_datos,
+                Driver="{Adaptive Server Anywhere 9.0}",
+                ServerName="gestionih1111",  # Reemplaza con tu servidor Sybase
+                Port="2638",  # Reemplaza con el puerto Sybase
+                PWD=self.contrasena,
+                FILE=self.base_datos,  # Ruta completa al archivo de base de datos
             )
             return True
-        except pymysql.Error as err:
-            print(f"Error al conectar a MySQL: {err}")
+        except pypyodbc.Error as err:
+            print(f"Error al conectar a Sybase: {err}")
             return False
+
+    def mostrar_tablas(self):
+        try:
+            with self.conexion.cursor() as cursor:
+                consulta = """
+                    SELECT table_name
+                    FROM INFORMATION_SCHEMA.TABLES
+                    WHERE table_type = 'BASE TABLE'
+                """
+                cursor.execute(consulta)
+                filas = cursor.fetchall()
+
+                print("Lista de tablas en la base de datos:")
+                for fila in filas:
+                    print(fila[0])
+        except pypyodbc.Error as err:
+            print(f"Error al mostrar las tablas: {err}")
 
     def desconectar(self):
         if self.conexion:
             self.conexion.close()
-            print("Conexión a MySQL cerrada.")
-
-    def crear_base_de_datos(self, nombre_nueva_bd):
-        try:
-            with self.conexion.cursor() as cursor:
-                cursor.execute(f"CREATE DATABASE {nombre_nueva_bd}")
-                print(f"Base de datos '{nombre_nueva_bd}' creada exitosamente.")
-        except pymysql.Error as err:
-            print(f"Error al crear la base de datos: {err}")
-
-    def crear_tabla(self, nombre_tabla, columnas):
-        try:
-            with self.conexion.cursor() as cursor:
-                consulta = f"CREATE TABLE {nombre_tabla} ({columnas})"
-                cursor.execute(consulta)
-                print(f"Tabla '{nombre_tabla}' creada exitosamente.")
-        except pymysql.Error as err:
-            print(f"Error al crear la tabla: {err}")
+            print("Conexión a Sybase cerrada.")
 
     def actualizar_tabla(self, nombre_tabla, columnas_actualizadas):
         try:
@@ -51,7 +54,7 @@ class ConexionMySQL:
                 consulta = f"ALTER TABLE {nombre_tabla} {columnas_actualizadas}"
                 cursor.execute(consulta)
                 print(f"Tabla '{nombre_tabla}' actualizada exitosamente.")
-        except pymysql.Error as err:
+        except pypyodbc.Error as err:
             print(f"Error al actualizar la tabla: {err}")
 
     def eliminar_tabla(self, nombre_tabla):
@@ -60,7 +63,7 @@ class ConexionMySQL:
                 consulta = f"DROP TABLE {nombre_tabla}"
                 cursor.execute(consulta)
                 print(f"Tabla '{nombre_tabla}' eliminada exitosamente.")
-        except pymysql.Error as err:
+        except pypyodbc.Error as err:
             print(f"Error al eliminar la tabla: {err}")
 
     def eliminar_base_de_datos(self, nombre_bd):
@@ -69,7 +72,7 @@ class ConexionMySQL:
                 consulta = f"DROP DATABASE {nombre_bd}"
                 cursor.execute(consulta)
                 print(f"Base de datos '{nombre_bd}' eliminada exitosamente.")
-        except pymysql.Error as err:
+        except pypyodbc.Error as err:
             print(f"Error al eliminar la base de datos: {err}")
 
     def seleccionar_tabla(self, nombre_tabla):
@@ -78,44 +81,30 @@ class ConexionMySQL:
                 consulta = f"SELECT * FROM {nombre_tabla}"
                 cursor.execute(consulta)
                 filas = cursor.fetchall()
-                
+
                 print(f"Contenido de la tabla '{nombre_tabla}':")
                 for fila in filas:
                     print(fila)
-        except pymysql.Error as err:
+        except pypyodbc.Error as err:
             print(f"Error al seleccionar la tabla '{nombre_tabla}': {err}")
 
-
-
-
-"""# Ejemplo de uso
+# Ejemplo de uso
 if __name__ == "__main__":
-    conexion_mysql = ConexionMySQL()
-    conexion_mysql.conectar()
+    # Reemplaza los valores con la información correcta para tu conexión Sybase
+    configuracion_sybase = {
+        "user": "dba",
+        "password": "gestion",
+        "database": "I:\Misa\tentollini_DBA 2023-12-11 12;05;28\Dba\gestionh.db",
+        # Agrega otros parámetros según sea necesario
+    }
 
-    # Crear una nueva base de datos
-    conexion_mysql.crear_base_de_datos("MercadoPagoQR")
+    conexion_sybase = ConexionSybase(**configuracion_sybase)
 
-    # Desconectar para luego conectar a la nueva base de datos
-    conexion_mysql.desconectar()
+    if conexion_sybase.conectar():
+        print("Conexión exitosa a Sybase.")
 
-    # Conectar a la nueva base de datos
-    conexion_mysql.base_datos = "MercadoPagoQR"
-    conexion_mysql.conectar()
-
-    # Crear una tabla de ejemplo
-    columnas_ejemplo = "id INT PRIMARY KEY, nombre VARCHAR(255), edad INT"
-    conexion_mysql.crear_tabla("Sucursal", columnas_ejemplo)
-
-    # Actualizar la tabla de ejemplo
-    columnas_actualizadas = "ADD COLUMN direccion VARCHAR(255)"
-    conexion_mysql.actualizar_tabla("Sucursal", columnas_actualizadas)
-
-    # Eliminar la tabla de ejemplo
-    #conexion_mysql.eliminar_tabla("Sucursal")
-
-    # Eliminar la base de datos creada
-    #conexion_mysql.eliminar_base_de_datos("MercadoPagoQR")
-
-    conexion_mysql.desconectar()
-"""
+        # Realiza las operaciones que necesites con la conexión Sybase
+        conexion_sybase.mostrar_tablas() 
+        conexion_sybase.desconectar()
+    else:
+        print("Error al conectar a Sybase.")
