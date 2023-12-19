@@ -2,12 +2,10 @@ import pypyodbc
 
 class ConexionSybase:
     def __init__(self, **kwargs):
-        self.conector = pypyodbc.connect(**kwargs)
+        self.conexion = None
         self.usuario = kwargs["user"]
         self.contrasena = kwargs["password"]
         self.base_datos = kwargs["database"]
-        self.conexion_cerrada = False
-        self.conexion = None
 
     def conectar(self):
         try:
@@ -16,8 +14,7 @@ class ConexionSybase:
                 password=self.contrasena,
                 database=self.base_datos,
                 Driver="{Adaptive Server Anywhere 9.0}",
-                ServerName="gestionih1111",  # Reemplaza con tu servidor Sybase
-                Port="2638",  # Reemplaza con el puerto Sybase
+                DSN="GestionIH1111",  # Nombre del DSN configurado en tu sistema
                 PWD=self.contrasena,
                 FILE=self.base_datos,  # Ruta completa al archivo de base de datos
             )
@@ -87,8 +84,8 @@ class ConexionSybase:
                     print(fila)
         except pypyodbc.Error as err:
             print(f"Error al seleccionar la tabla '{nombre_tabla}': {err}")
-
-# Ejemplo de uso
+            
+            
 if __name__ == "__main__":
     # Reemplaza los valores con la información correcta para tu conexión Sybase
     configuracion_sybase = {
@@ -104,7 +101,7 @@ if __name__ == "__main__":
         print("Conexión exitosa a Sybase.")
 
         # Realiza las operaciones que necesites con la conexión Sybase
-        conexion_sybase.mostrar_tablas() 
+        conexion_sybase.mostrar_tablas()
         conexion_sybase.desconectar()
     else:
         print("Error al conectar a Sybase.")
