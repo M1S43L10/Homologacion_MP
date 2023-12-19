@@ -9,3 +9,38 @@ Sucursal-01
 		CAJAS = 
 			Ca_0101  
 			Ca_0102
+
+
+curl -X GET \
+      'https://api.mercadopago.com/instore/qr/seller/collectors/1588285685/pos/SUC002POS001/orders'\
+       -H 'Content-Type: application/json' \
+       -H 'Authorization: Bearer APP_USR-3774512295656164-121208-e45df91faddd6fd608de107d1db2971f-1588285685' \
+       
+
+
+curl -X PUT \
+      'https://api.mercadopago.com/instore/qr/seller/collectors/1588285685/stores/SUC001/pos/SUC002POS001/orders'\
+       -H 'Content-Type: application/json' \
+       -H 'Authorization: Bearer APP_USR-3774512295656164-121208-e45df91faddd6fd608de107d1db2971f-1588285685' \
+       -d '{
+  "cash_out": {
+    "amount": 0
+  },
+  "description": "Purchase description.",
+  "external_reference": "12345",
+  "items": [
+    {
+      "sku_number": "A123K9191938",
+      "category": "marketplace",
+      "title": "Point Mini",
+      "description": "This is the Point Mini",
+      "unit_price": 100,
+      "quantity": 1,
+      "unit_measure": "unit",
+      "total_amount": 100
+    }
+  ],
+  "notification_url": "http://www.yourserver.com/notification",
+  "title": "Product order",
+  "total_amount": 100
+}'

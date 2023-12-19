@@ -156,6 +156,19 @@ class Conexion_Api:
         
         response = requests.post(url, headers=headers, data=json.dumps(payload))
         print(response)
+        return response.status_code
+        
+    def obtener_orden(self, external_pos_id):
+        url = f"https://api.mercadopago.com/instore/qr/seller/collectors/{self.id_user}/pos/{external_pos_id}/orders"
+        
+        headers = {
+            "Content-Type": 'application/json',
+            "Authorization": f"{self.access_token}"
+            }
+        
+        response = requests.get(url= url, headers=headers)
+        return response.status_code
+        
         
     def crear_orden_dinamico(self, precio ,nombre_SUC, nombre_CAJA):
 

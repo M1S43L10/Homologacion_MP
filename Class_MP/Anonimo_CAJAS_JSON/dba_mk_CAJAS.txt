@@ -1,0 +1,1 @@
+"id INT PK, qr VARCHAR(255), status VARCHAR(255), date_created VARCHAR(255), date_last_updated VARCHAR(255), uuid VARCHAR(255), user_id INT, name VARCHAR(255), fixed_amount VARCHAR(255), category INT, store_id VARCHAR(255), external_store_id VARCHAR(255), external_id VARCHAR(255), site VARCHAR(255), qr_code VARCHAR(255)"

@@ -1,0 +1,1 @@
+"id VARCHAR(255), name VARCHAR(255), date_creation VARCHAR(255), business_hours VARCHAR(255), location VARCHAR(255), external_id VARCHAR(255)"
