@@ -144,30 +144,82 @@ class Conexion_Api:
             "items": [
                 {
                 "id": 78123172,
-                "title": "CHANGUITO",
+                "title": "ANONIMO",
                 "currency_id": "ARG",
                 "unit_price": precio,
                 "quantity": 1,
                 "description": "MERCADERIAS",
                 "picture_url": "https://previews.123rf.com/images/freaktor/freaktor2002/freaktor200200004/139383340-verduras-en-carro-de-compras-carro-supermercado-logo-icono-dise%C3%B1o-vector.jpg"
                 },
-            ]
+            ],
+            "notification_url": "https://6a95-186-122-104-145.ngrok-free.app/"
             }
         
         response = requests.post(url, headers=headers, data=json.dumps(payload))
+        # Crear la carpeta si no existe
+        folder_path = "CREAR_PAGOS"
+        os.makedirs(folder_path, exist_ok=True)
+
+        # Guardar la respuesta en un archivo JSON en la carpeta
+        with open(os.path.join(folder_path, f"{external_id}.json"), "w") as json_file:
+            json.dump(response.json(), json_file, indent=2)
         print(response)
-        return response.status_code
+    
+    
+    #CREAR LA ORDEN (VERSION 2.0) PODEMOS OBTENER LA ORDEN DE COMPRA
+    def crear_ordenV2(self, external_store_id, external_pos_id):
         
-    def obtener_orden(self, external_pos_id):
+        url = f"https://api.mercadopago.com/instore/qr/seller/collectors/{self.id_user}/stores/{external_store_id}/pos/{external_pos_id}/orders"    
+        
+        headers = {
+            "Content-Type": 'application/json',
+            'Authorization': f'Bearer {self.access_token}'
+            }
+        
+        payload = {
+            "cash_out": {
+                "amount": 0
+            },
+            "description": "Purchase description.",
+            "external_reference": "reference_12345",
+            "items": [
+                {
+                "sku_number": "A123K9191938",
+                "category": "marketplace",
+                "title": "ANONIMO",
+                "description": "SUPERMERCADO",
+                "unit_price": 100,
+                "quantity": 1,
+                "unit_measure": "unit",
+                "total_amount": 100
+                },
+            ],
+            "notification_url": "https://www.yourserver.com/notifications",
+            "title": "Product order",
+            "total_amount": 100          
+            }
+        
+        response = requests.put(url, headers=headers, data=json.dumps(payload))
+        print(response)
+        
+    def obtener_ordenV2(self, external_pos_id,):
         url = f"https://api.mercadopago.com/instore/qr/seller/collectors/{self.id_user}/pos/{external_pos_id}/orders"
         
         headers = {
             "Content-Type": 'application/json',
-            "Authorization": f"{self.access_token}"
+            "Authorization": f"Bearer {self.access_token}"
             }
         
         response = requests.get(url= url, headers=headers)
+        # Crear la carpeta si no existe
+        folder_path = "OBTENER_PAGOS"
+        os.makedirs(folder_path, exist_ok=True)
+
+        # Guardar la respuesta en un archivo JSON en la carpeta
+        with open(os.path.join(folder_path, f"{external_pos_id}.json"), "w") as json_file:
+            json.dump(response.json(), json_file, indent=2)
         return response.status_code
+    
         
         
     def crear_orden_dinamico(self, precio ,nombre_SUC, nombre_CAJA):

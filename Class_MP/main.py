@@ -15,15 +15,19 @@ app = Conexion_Api("1588285685", "APP_USR-3774512295656164-121208-e45df91faddd6f
 #app.crear_caja("Anonimo")
 
 #Crear Orden ATENDIDO
-#respuesta = app.crear_orden(1000, "SUC002POS001")
+app.crear_orden(1000, "SUC002POS001")
 """if respuesta >= 200 and respuesta < 300:
     respuesta1 = app.obtener_orden(91927793)
     while respuesta1 > 300 and respuesta1 < 500:
         respuesta1 = app.obtener_orden(91927793)
         print(respuesta1)"""
+        
+#respuesta1 = app.crear_ordenV2("SUC002", "SUC002POS001")
 
-respuesta1 = app.obtener_orden(91927793)
-print(respuesta1)
+#respuesta1 = app.obtener_ordenV2("SUC002POS001")
+#print(respuesta1)
 
 #Crear Orden DINAMICO
 #app.crear_orden_dinamico(1800, "Anonimo", "Ca_0101")
+
+

@@ -12,14 +12,13 @@ Sucursal-01
 
 
 curl -X GET \
-      'https://api.mercadopago.com/instore/qr/seller/collectors/1588285685/pos/SUC002POS001/orders'\
+      'https://api.mercadopago.com/v1/payments/68928836899'\
        -H 'Content-Type: application/json' \
        -H 'Authorization: Bearer APP_USR-3774512295656164-121208-e45df91faddd6fd608de107d1db2971f-1588285685' \
        
 
-
 curl -X PUT \
-      'https://api.mercadopago.com/instore/qr/seller/collectors/1588285685/stores/SUC001/pos/SUC002POS001/orders'\
+      'https://api.mercadopago.com/instore/qr/seller/collectors/1588285685/stores/SUC002/pos/SUC002POS001/orders'\
        -H 'Content-Type: application/json' \
        -H 'Authorization: Bearer APP_USR-3774512295656164-121208-e45df91faddd6fd608de107d1db2971f-1588285685' \
        -d '{
@@ -40,7 +39,6 @@ curl -X PUT \
       "total_amount": 100
     }
   ],
-  "notification_url": "http://www.yourserver.com/notification",
   "title": "Product order",
   "total_amount": 100
 }'
