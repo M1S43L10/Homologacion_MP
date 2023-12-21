@@ -1,6 +1,0 @@
-{
-  "error": "point_of_sale_in_store_order_not_found",
-  "message": "The required PointOfSaleInStoreOrder not found",
-  "status": 404,
-  "causes": []
-}

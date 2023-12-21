@@ -2,11 +2,21 @@ import requests
 import json
 import os
 from direccion import *
+from connect_db import ConexionSybase
 
 class Conexion_Api:
     def __init__(self, id_user, acess_token):
         self.id_user = id_user
         self.access_token = acess_token
+        
+        configuracion_sybase = {
+        "user": "dba",
+        "password": "gestion",
+        "database": r"I:\Misa\tentollini_DBA 2023-12-11 12;05;28\Dba\gestionh.db",
+        # Agrega otros parámetros según sea necesario
+    }
+
+        self.conexion_sybase = ConexionSybase(**configuracion_sybase)
 
     def crear_sucursal(self, hs_abrir, hs_cerrar, nro_sucursal):
         # Url con el Id_User para crear la SUCURSAL
@@ -130,7 +140,7 @@ class Conexion_Api:
             
     #def eliminar_caja(self):
     
-    def crear_orden(self, precio, external_id):
+    def crear_orden(self, precio, external_id, factura):
         
         url = f"https://api.mercadopago.com/mpmobile/instore/qr/{self.id_user}/{external_id}"
         
@@ -140,10 +150,10 @@ class Conexion_Api:
             'Authorization': f'Bearer {self.access_token}'
         }
         payload = {
-            "external_reference": "Factura-0001",
+            "external_reference": f"Factura-000{factura}",
             "items": [
                 {
-                "id": 78123172,
+                "id": 0000000,
                 "title": "ANONIMO",
                 "currency_id": "ARG",
                 "unit_price": precio,
@@ -152,8 +162,10 @@ class Conexion_Api:
                 "picture_url": "https://previews.123rf.com/images/freaktor/freaktor2002/freaktor200200004/139383340-verduras-en-carro-de-compras-carro-supermercado-logo-icono-dise%C3%B1o-vector.jpg"
                 },
             ],
-            "notification_url": "https://6a95-186-122-104-145.ngrok-free.app/"
+            "notification_url": "https://e39d-186-122-104-145.ngrok-free.app/"
             }
+        
+        self.conexion_sybase.insertar_datos_MERCHANT(payload["external_reference"])
         
         response = requests.post(url, headers=headers, data=json.dumps(payload))
         # Crear la carpeta si no existe
@@ -163,7 +175,8 @@ class Conexion_Api:
         # Guardar la respuesta en un archivo JSON en la carpeta
         with open(os.path.join(folder_path, f"{external_id}.json"), "w") as json_file:
             json.dump(response.json(), json_file, indent=2)
-        print(response)
+        print(response.status_code)
+        return response.status_code
     
     
     #CREAR LA ORDEN (VERSION 2.0) PODEMOS OBTENER LA ORDEN DE COMPRA
@@ -281,3 +294,23 @@ class Conexion_Api:
         
         response = requests.post(url, headers=headers, data=json.dumps(pagodata_json))
         return response   
+    
+    def obtener_pago(self, nro_operacion):
+        url = f"https://api.mercadopago.com/v1/payments/{nro_operacion}"
+        
+        headers = {
+            "Content-Type": 'application/json',
+            'Authorization': f'Bearer {self.access_token}'
+            }
+        
+        response = requests.get(url=url, headers=headers)
+        print(response.status_code)
+        # Crear la carpeta si no existe
+        folder_path = "OBTENER_PAGOS"
+        os.makedirs(folder_path, exist_ok=True)
+
+        # Guardar la respuesta en un archivo JSON en la carpeta
+        with open(os.path.join(folder_path, f"{self.id_user}.json"), "w") as json_file:
+            json.dump(response.json(), json_file, indent=2)
+        print(response.status_code)
+        return response.status_code

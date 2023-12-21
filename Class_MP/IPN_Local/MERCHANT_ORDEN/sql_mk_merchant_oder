@@ -1,0 +1,7 @@
+"""
+                CREATE TABLE {nombre_tabla} (
+                    ID INT PRIMARY KEY IDENTITY,
+                    ID_PAGO VARCHAR(255),
+                    ID_COMPRA INT
+                )
+            """

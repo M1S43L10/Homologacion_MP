@@ -1,10 +1,10 @@
 import pypyodbc
 import json
-import os
 
 class ConexionSybase:
     def __init__(self, **kwargs):
         self.conexion = None
+        self.cursor = None
         self.usuario = kwargs["user"]
         self.contrasena = kwargs["password"]
         self.base_datos = kwargs["database"]
@@ -21,6 +21,7 @@ class ConexionSybase:
                 PWD=self.contrasena,
                 FILE=self.base_datos,  # Ruta completa al archivo de base de datos
             )
+            self.cursor = self.conexion.cursor()  # Crea el cursor
             return True
         except pypyodbc.Error as err:
             print(f"Error al conectar a Sybase: {err}")
@@ -38,17 +39,26 @@ class ConexionSybase:
             print(f"Error al eliminar la base de datos: {err}")
             
         
-    #MANEJOS DE TABLAS
-    
-    def crear_tabla(self, tabla, columnas):
+    #MANEJOS DE TABLAS    
+    def crear_tabla(self, nombre_tabla):
         try:
-            with self.conexion.cursor() as cursor:
-                consulta = f"CREATE TABLE {tabla} ({columnas})"
-                cursor.execute(consulta)
-                print(f"Tabla '{tabla}' creada exitosamente.")
-        except pypyodbc.Error as err:
-            print(f"Error al crear la tabla: {err}")
-    
+            self.conectar()
+            query = f"""
+                CREATE TABLE {nombre_tabla} (
+                    ID INT PRIMARY KEY IDENTITY,
+                    NRO_FACTURA VARCHAR(255),
+                    ID_PAGO VARCHAR(255),
+                    ID_COMPRA BIGINT
+                )
+            """
+            self.cursor.execute(query)
+            self.conexion.commit()
+            print(f'Tabla {nombre_tabla} creada con éxito.')
+        except Exception as e:
+            print(f'Error al crear la tabla: {e}')
+        finally:
+            self.desconectar()
+
     def mostrar_tablas(self, nombre_bda):
         try:
             with self.conexion.cursor() as cursor:
@@ -120,11 +130,27 @@ class ConexionSybase:
         except pypyodbc.Error as err:
             print(f"Error al insertar datos: {err}")
             
+    def insertar_datos_MERCHANT(self, NRO_FACTURA):
+        try:
+            self.conectar()
+            datos = {
+                'NRO_FACTURA': NRO_FACTURA,
+            }
+            self.insertar_datos('MERCHANTORDEN', datos)
+        except Exception as e:
+            print(f'Error al insertar datos en MERCHANTORDEN: {e}')
+        finally:
+            self.desconectar()
+
+            
     #DESCONEXION DE LA BASE DE DATOS
     def desconectar(self):
-        if self.conexion:
+        if self.conexion and self.conexion.connected:
             self.conexion.close()
             print("Conexión a Sybase cerrada.")
+        else:
+            print("La conexión ya estaba cerrada.")
+
             
 
 
@@ -143,21 +169,9 @@ if __name__ == "__main__":
 
     if conexion_sybase.conectar():
         print("Conexión exitosa a Sybase.")
+        
+        conexion_sybase.crear_tabla("MERCHANTORDEN")
 
-        # Ruta completa del archivo JSON
-        ruta_json = os.path.join("Anonimo_CAJAS_JSON", "Ca_0101.json")
-
-        try:
-            # Cargar datos desde el archivo JSON
-            with open(ruta_json, "r", encoding="utf-8") as archivo_json:
-                datos_json = json.load(archivo_json)
-
-            # Insertar datos en la tabla correspondiente
-            conexion_sybase.insertar_datos("MP_CAJAS ", datos_json)
-        except FileNotFoundError:
-            print(f"Archivo JSON no encontrado: {ruta_json}")
-        except json.JSONDecodeError as json_err:
-            print(f"Error al decodificar el JSON: {json_err}")
 
         conexion_sybase.desconectar()
     else:

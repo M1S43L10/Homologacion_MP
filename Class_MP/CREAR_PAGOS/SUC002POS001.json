@@ -1,15 +1,15 @@
 {
-  "id": "1588285685-b4c708a6-43b6-49ee-935a-a5b810167c3f",
+  "id": "1588285685-3a6b63b6-7e8f-4092-96a3-29c213ee2783",
   "items": [
     {
-      "id": "78123172",
+      "id": "0",
       "category_id": "",
       "title": "ANONIMO",
       "quantity": 1,
       "currency_id": "ARS",
       "unit_price": 1000,
       "description": "MERCADERIAS",
-      "picture_url": "https://http2.mlstatic.com/D_NQ_NP_931522-MLA73433008074_122023-F.jpg"
+      "picture_url": "https://http2.mlstatic.com/D_NQ_NP_617832-MLA73473008160_122023-F.jpg"
     }
   ],
   "collector_id": 1588285685,
@@ -35,13 +35,13 @@
   "marketplace": "NONE",
   "marketplace_fee": 0,
   "sponsor_id": 0,
-  "notification_url": "https://6a95-186-122-104-145.ngrok-free.app/",
+  "notification_url": "https://e39d-186-122-104-145.ngrok-free.app/",
   "back_urls": {
     "success": "",
     "pending": "",
     "failure": ""
   },
-  "expiration_date_to": "2023-12-20T11:23:57.047-04:00",
+  "expiration_date_to": "2023-12-21T11:27:42.807-04:00",
   "expires": true,
   "additional_info": "",
   "site_id": "MLA",

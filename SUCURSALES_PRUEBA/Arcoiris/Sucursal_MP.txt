@@ -12,7 +12,7 @@ Sucursal-01
 
 
 curl -X GET \
-      'https://api.mercadopago.com/v1/payments/68928836899'\
+      'https://api.mercadopago.com/v1/payments/69188203616'\
        -H 'Content-Type: application/json' \
        -H 'Authorization: Bearer APP_USR-3774512295656164-121208-e45df91faddd6fd608de107d1db2971f-1588285685' \
        

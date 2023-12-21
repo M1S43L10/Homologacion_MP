@@ -1,0 +1,26 @@
+[
+  {
+    "resource": "https://api.mercadolibre.com/merchant_orders/14292297661",
+    "topic": "merchant_order"
+  },
+  {
+    "action": "payment.created",
+    "api_version": "v1",
+    "data": {
+      "id": "69197946370"
+    },
+    "date_created": "2023-12-21T14:27:37Z",
+    "id": 109309925421,
+    "live_mode": true,
+    "type": "payment",
+    "user_id": "1588285685"
+  },
+  {
+    "resource": "https://api.mercadolibre.com/collections/notifications/69197946370",
+    "topic": "payment"
+  },
+  {
+    "resource": "https://api.mercadolibre.com/merchant_orders/14292297661",
+    "topic": "merchant_order"
+  }
+]
