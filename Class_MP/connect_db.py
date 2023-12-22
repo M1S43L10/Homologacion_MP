@@ -141,8 +141,43 @@ class ConexionSybase:
             print(f'Error al insertar datos en MERCHANTORDEN: {e}')
         finally:
             self.desconectar()
-
             
+    def actualizar_id_pago(self, numero_factura, ID_PAGO):
+        try:
+            self.conectar()
+
+            with self.conexion.cursor() as cursor:
+                # Ejecutar la consulta para actualizar el ID_PAGO
+                query = f"UPDATE MERCHANTORDEN SET ID_PAGO = '{ID_PAGO[0]}' WHERE NRO_FACTURA = '{numero_factura}'"
+                cursor.execute(query)
+                self.conexion.commit()
+
+                print(f"ID_PAGO actualizado exitosamente para la factura {numero_factura}.")
+        except pypyodbc.Error as err:
+            print(f"Error al actualizar ID_PAGO: {err}")
+        finally:
+            self.desconectar()
+    
+    # MANEJO DE DATOS DE UNA TABLA
+    def obtener_id_compra(self, numero_factura):
+        try:
+            with self.conexion.cursor() as cursor:
+                # Ejecutar la consulta para obtener el ID de compra
+                query = f"SELECT ID_COMPRA FROM MERCHANTORDEN WHERE NRO_FACTURA = '{numero_factura}'"
+                cursor.execute(query)
+
+                # Obtener el resultado de la consulta
+                resultado = cursor.fetchone()
+
+                if resultado:
+                    # Si se encontró un resultado, devolver el ID de compra
+                    return resultado[0]
+                else:
+                    # Si no se encontró ninguna coincidencia, devolver None o algún valor indicativo
+                    return 
+        except pypyodbc.Error as err:
+            print(f"Error al obtener el ID de compra: {err}")
+            return None
     #DESCONEXION DE LA BASE DE DATOS
     def desconectar(self):
         if self.conexion and self.conexion.connected:
@@ -170,7 +205,7 @@ if __name__ == "__main__":
     if conexion_sybase.conectar():
         print("Conexión exitosa a Sybase.")
         
-        conexion_sybase.crear_tabla("MERCHANTORDEN")
+        conexion_sybase.obtener_id_compra("Factura-0001")
 
 
         conexion_sybase.desconectar()

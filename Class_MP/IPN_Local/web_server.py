@@ -1,48 +1,46 @@
-import os
-import json
+# No es necesario agregar la ruta completa en sys.path
+import sys
+sys.path.append(r"C:\Users\Op_1111\Desktop\Codigos_GitHub\Homologacion_MP")
+
+# Importa directamente desde Class_MP
+from Class_MP.connect_db import ConexionSybase
+from Class_MP.main import crear_ORDEN
+
 from flask import Flask, request
-import threading
 app = Flask(__name__)
 
-responses = []
-response_counter = 0
-lock = threading.Lock()
+# Variable para almacenar el valor del ID de pago web
+IDPAGOWEB = None
 
-@app.route('/', methods=['GET', 'POST'])
+# Configuración de Sybase
+configuracion_sybase = {
+    "user": "dba",
+    "password": "gestion",
+    "database": r"I:\Misa\tentollini_DBA 2023-12-11 12;05;28\Dba\gestionh.db",
+    # Agrega otros parámetros según sea necesario
+}
+
+conexion_sybase = ConexionSybase(**configuracion_sybase)
+
+@app.route('/', methods=['POST'])
 def index():
-    global response_counter  # Asegura que response_counter sea tratada como una variable global
+    global IDPAGOWEB  # Asegura que la variable sea tratada como global
+    
+    crear_ORDENweb = crear_ORDEN
 
-    if request.method == 'POST':
-        try:
-            data = request.get_json()
+    try:
+        data = request.get_json()
 
-            # Bloquea el acceso a las variables compartidas
-            with lock:
-                responses.append(data)
-                response_counter += 1
+        # Verifica si existe la clave "data" y su valor tiene la clave "id"
+        if 'data' in data and 'id' in data['data']:
+            IDPAGOWEB = data.get('IDPAGOWEB')  # Actualiza el valor de IDPAGOWEB si está presente en el POST
+            conexion_sybase.actualizar_id_pago(crear_ORDENweb[0], IDPAGOWEB)
+            print(f'IDPAGOWEB actualizado: {IDPAGOWEB}')
 
-                # Si hemos recibido todas las respuestas, procesa y guarda
-                if response_counter == 4:
-                    # Restablece el contador para la próxima ronda de solicitudes
-                    response_counter = 0
-
-                    # Crear la carpeta "MERCHANT_ORDEN" si no existe
-                    if not os.path.exists('MERCHANT_ORDEN'):
-                        os.makedirs('MERCHANT_ORDEN')
-
-                    # Guardar todas las respuestas como un solo archivo JSON
-                    file_name = os.path.join('MERCHANT_ORDEN', 'all_responses.json')
-                    with open(file_name, 'w') as file:
-                        json.dump(responses, file, indent=2)
-
-                    print(f"Todas las respuestas recibidas y guardadas en {file_name}")
-
-            return 'OK'
-        except Exception as e:
-            print(f"Error al procesar la solicitud: {str(e)}")
-            return 'Error', 500
-    else:
-        return 'HOLA SOY MISAEL'
+        return 'OK'
+    except Exception as e:
+        print(f"Error al procesar la solicitud: {str(e)}")
+        return 'Error', 500
 
 if __name__ == '__main__':
     app.run(port=5000)
