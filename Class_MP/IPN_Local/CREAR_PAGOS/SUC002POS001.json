@@ -1,5 +1,5 @@
 {
-  "id": "1588285685-e23028fe-8e52-42eb-be8b-a2ad1da6d615",
+  "id": "1588285685-72836081-2b0d-4c47-a3c3-fb8b73908a4c",
   "items": [
     {
       "id": "0",
@@ -16,7 +16,7 @@
   "collector": {},
   "total_amount": 1000,
   "amount": 1000,
-  "external_reference": "Factura-0002",
+  "external_reference": "Factura-0015",
   "operation_type": "regular_payment",
   "payment_methods": {
     "excluded_payment_methods": [],
@@ -35,13 +35,13 @@
   "marketplace": "NONE",
   "marketplace_fee": 0,
   "sponsor_id": 0,
-  "notification_url": "https://c401-186-122-104-145.ngrok-free.app/",
+  "notification_url": "https://d3c6-186-122-104-145.ngrok-free.app/",
   "back_urls": {
     "success": "",
     "pending": "",
     "failure": ""
   },
-  "expiration_date_to": "2023-12-23T11:09:43.942-04:00",
+  "expiration_date_to": "2023-12-23T11:04:48.806-04:00",
   "expires": true,
   "additional_info": "",
   "site_id": "MLA",

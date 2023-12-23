@@ -1,17 +1,15 @@
-# No es necesario agregar la ruta completa en sys.path
+from flask import Flask, request
 import sys
 sys.path.append(r"C:\Users\Op_1111\Desktop\Codigos_GitHub\Homologacion_MP")
-
 # Importa directamente desde Class_MP
 from Class_MP.connect_db import ConexionSybase
-from Class_MP.main import crear_ORDEN
+import threading
 
-from flask import Flask, request
 app = Flask(__name__)
 
-# Variable para almacenar el valor del ID de pago web
-IDPAGOWEB = None
-
+# Variable local para almacenar el valor de "id"
+id_value = None
+lock = threading.Lock()
 # Configuración de Sybase
 configuracion_sybase = {
     "user": "dba",
@@ -24,23 +22,24 @@ conexion_sybase = ConexionSybase(**configuracion_sybase)
 
 @app.route('/', methods=['POST'])
 def index():
-    global IDPAGOWEB  # Asegura que la variable sea tratada como global
-    
-    crear_ORDENweb = crear_ORDEN
+    global id_value  # Asegura que las variables sean tratadas como globales
 
     try:
+        sys.path.append(r"C:\Users\Op_1111\Desktop\Codigos_GitHub\Homologacion_MP")
+        from Class_MP.main import orden_creada
+        orden_creadaWEB = orden_creada()
         data = request.get_json()
-
         # Verifica si existe la clave "data" y su valor tiene la clave "id"
         if 'data' in data and 'id' in data['data']:
-            IDPAGOWEB = data.get('IDPAGOWEB')  # Actualiza el valor de IDPAGOWEB si está presente en el POST
-            conexion_sybase.actualizar_id_pago(crear_ORDENweb[0], IDPAGOWEB)
-            print(f'IDPAGOWEB actualizado: {IDPAGOWEB}')
+            # Bloquea el acceso a la variable compartida
+            with lock:
+                id_value = data['data']['id']
+                conexion_sybase.actualizar_id_pago(orden_creadaWEB[1], orden_creadaWEB[2], id_value)
+                print(f'VALOR ACTUALIZADO EN LA BASE DE DATOS')
 
         return 'OK'
     except Exception as e:
         print(f"Error al procesar la solicitud: {str(e)}")
         return 'Error', 500
-
 if __name__ == '__main__':
     app.run(port=5000)

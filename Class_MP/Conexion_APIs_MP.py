@@ -1,7 +1,9 @@
 import requests
 import json
 import os
-from direccion import *
+import sys
+sys.path.append(r"C:\Users\Op_1111\Desktop\Codigos_GitHub\Homologacion_MP")
+from Class_MP.direccion import *
 
 class Conexion_Api:
     def __init__(self, id_user, acess_token):
@@ -128,7 +130,7 @@ class Conexion_Api:
         else:
             print(f"No se logró la Conexión. ERROR {response.status_code} \t\n {response}")
             
-    #ORDEN DINAMICA
+    #ORDEN ATENDIDA
     def crear_orden(self, precio, external_id, factura):
         
         url = f"https://api.mercadopago.com/mpmobile/instore/qr/{self.id_user}/{external_id}"
@@ -151,7 +153,7 @@ class Conexion_Api:
                 "picture_url": "https://previews.123rf.com/images/freaktor/freaktor2002/freaktor200200004/139383340-verduras-en-carro-de-compras-carro-supermercado-logo-icono-dise%C3%B1o-vector.jpg"
                 },
             ],
-            "notification_url": "https://32e2-186-122-104-145.ngrok-free.app/"
+            "notification_url": "https://c401-186-122-104-145.ngrok-free.app/"
             }
         
         response = requests.post(url, headers=headers, data=json.dumps(payload))
@@ -163,7 +165,7 @@ class Conexion_Api:
         with open(os.path.join(folder_path, f"{external_id}.json"), "w") as json_file:
             json.dump(response.json(), json_file, indent=2)
         print(response.status_code)
-        return response.status_code, payload["external_reference"]
+        return response.status_code, payload["external_reference"], external_id
     
     #NO FUNCIONA
     #CREAR LA ORDEN (VERSION 2.0) PODEMOS OBTENER LA ORDEN DE COMPRA
