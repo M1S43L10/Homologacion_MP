@@ -1,0 +1,27 @@
+Tablas necesarias para MERCADOPAGOQR
+
+/*/*/*/*/*/*/*/*/*/*/*/*/ TABLAS PARA CREACION DE SUCURSAL /*/*/*/*/*/*/*/*/*/*/*/*/
+MPQRCODE_SUCURSAL =
+"idINCREMET INT IDENTITY PRIMARY KEY, id VARCHAR(255), name VARCHAR(255), date_creation VARCHAR(255), business_hours VARCHAR(255), location VARCHAR(255), external_id VARCHAR(255)"
+
+AGREGAR = 2 TABLAS QUE TRABAJAN CON MPQRCODE_SUCURSAL QUE SON = 
+    MPQRCODE_SUCURSAL_business_hours
+    MPQRCODE_SUCURSAL_location
+
+
+/*/*/*/*/*/*/*/*/*/*/*/*/ TABLAS PARA CREACION DE CAJAS /*/*/*/*/*/*/*/*/*/*/*/*/
+MPQRCODE_CAJAS = 
+"idINCREMET INT IDENTITY PRIMARY KEY, id BIGINT, qr VARCHAR(255), status VARCHAR(255), date_created VARCHAR(255), date_last_updated VARCHAR(255), uuid VARCHAR(255), user_id BIGINT, name VARCHAR(255), fixed_amount VARCHAR(255), category BIGINT, store_id VARCHAR(255), external_store_id VARCHAR(255), external_id VARCHAR(255), site VARCHAR(255), qr_code VARCHAR(255)"
+
+
+ESTAS TRES TABLAS TRABAJAN EN CONJUNTO PARA PODER OBTENER EL STATUS DEL PAGO
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+MPQRCODE_CREARORDEN = 
+"idINCREMET INT IDENTITY PRIMARY KEY, id BIGINT, items VARCHAR(255), collector_id BIGINT, collector VARCHAR(255), total_amount BIGINT, amount BIGINT, external_reference VARCHAR(255), operation_type VARCHAR(255), payment_methods VARCHAR(255), marketplace VARCHAR(255), marketplace_fee VARCHAR(255), sponsor_id BIGINT, notification_url VARCHAR(255), expiration_date_to VARCHAR(255), expires VARCHAR(255), additional_info VARCHAR(255), site_id VARCHAR(255), client_id BIGINT, processing_modes VARCHAR(255), internal_metadata VARCHAR(255)"
+
+MPQRCODE_RESPUESTAPOST = 
+"idINCREMET INT IDENTITY PRIMARY KEY", action VARCHAR(255), api_version VARCHAR(255), data VARCHAR(255), date_created VARCHAR(255), id BIGINT, live_mode VARCHAR(255), type VARCHAR(255), user_id VARCHAR(255)
+
+MPQRCODE_OBTENERPAGO = 
+"idINCREMET INT IDENTITY PRIMARY KEY, accounts_info VARCHAR(255), acquirer_reconciliation VARCHAR(255), additional_info VARCHAR(255), authorization_code VARCHAR(255), binary_mode VARCHAR(255), brand_id VARCHAR(255), build_version VARCHAR(255), call_for_authorize_id VARCHAR(255), captured VARCHAR(255), card VARCHAR(255), charges_details VARCHAR(255), collector_id BIGINT, corporation_id VARCHAR(255), counter_currency VARCHAR(255), coupon_amount BIGINT, currency_id VARCHAR(255), date_approved VARCHAR(255), date_created VARCHAR(255), date_last_updated VARCHAR(255), date_of_expiration VARCHAR(255), deduction_schema VARCHAR(255), description VARCHAR(255), differential_pricing_id VARCHAR(255), external_reference VARCHAR(255), fee_details VARCHAR(255), financing_group VARCHAR(255), id BIGINT, installments INT, integrator_id VARCHAR(255), issuer_id VARCHAR(255), live_mode VARCHAR(255), marketplace_owner VARCHAR(255), merchant_account_id VARCHAR(255), merchant_number VARCHAR(255), metadata VARCHAR(255), money_release_date VARCHAR(255), money_release_schema VARCHAR(255), money_release_status VARCHAR(255), notification_url VARCHAR(255), operation_type VARCHAR(255), order VARCHAR(255), payer  VARCHAR(255), payment_method  VARCHAR(255), payment_method_id  VARCHAR(255), payment_type_id  VARCHAR(255), platform_id  VARCHAR(255), point_of_interaction  VARCHAR(255), pos_id  VARCHAR(255), processing_mode  VARCHAR(255), refunds  VARCHAR(255), shipping_amount BIGINT, sponsor_id  VARCHAR(255), statement_descriptor VARCHAR(255), status  VARCHAR(255), status_detail  VARCHAR(255), store_id  VARCHAR(255), tags  VARCHAR(255), taxes_amount BIGINT, transaction_amount BIGINT, transaction_amount_refunded BIGINT, transaction_details VARCHAR(255)"
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

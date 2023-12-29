@@ -2,8 +2,19 @@ from flask import Flask, request
 import sys
 sys.path.append(r"C:\Users\Op_1111\Desktop\Codigos_GitHub\Homologacion_MP")
 # Importa directamente desde Class_MP
-from Class_MP.connect_db import ConexionSybase
+from Class_MP.database import ConexionSybase
 import threading
+from datetime import datetime, timedelta
+
+
+# Obtener la fecha y hora actual
+now = datetime.now()
+
+# Calcular la fecha y hora hace 24 horas
+twenty_four_hours_ago = now - timedelta(hours=24)
+
+# Formatear las fechas
+formato_fecha = now.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] 
 
 app = Flask(__name__)
 
@@ -25,16 +36,13 @@ def index():
     global id_value  # Asegura que las variables sean tratadas como globales
 
     try:
-        sys.path.append(r"C:\Users\Op_1111\Desktop\Codigos_GitHub\Homologacion_MP")
-        from Class_MP.main import orden_creada
-        orden_creadaWEB = orden_creada()
         data = request.get_json()
         # Verifica si existe la clave "data" y su valor tiene la clave "id"
         if 'data' in data and 'id' in data['data']:
             # Bloquea el acceso a la variable compartida
             with lock:
                 id_value = data['data']['id']
-                conexion_sybase.actualizar_id_pago(orden_creadaWEB[1], orden_creadaWEB[2], id_value)
+                conexion_sybase.insertar_datos_MERCHANTPAGO(formato_fecha, id_value)
                 print(f'VALOR ACTUALIZADO EN LA BASE DE DATOS')
 
         return 'OK'

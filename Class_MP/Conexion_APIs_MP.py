@@ -37,6 +37,12 @@ class Conexion_Api:
                         'close': f'{hs_cerrar}',
                     },
                 ],
+                'sunday': [
+                    {
+                        'open': f'{hs_abrir}',
+                        'close': f'{hs_cerrar}',
+                    },
+                ],
             },
             'external_id': f'{nro_sucursal}',  # Asignar el id como se identificara a la sucursal para mas adelante
             'location': {
@@ -52,7 +58,9 @@ class Conexion_Api:
         }
 
         response = requests.post(url, headers=headers, data=json.dumps(SUCload))
-
+        
+        #GUARDAR EL JSON COMO ARCHIVO DE FORMAR LOCAL
+        """
         # Crear la carpeta si no existe
         folder_path = "SUCURSALES_JSON"
         os.makedirs(folder_path, exist_ok=True)
@@ -60,42 +68,30 @@ class Conexion_Api:
         # Guardar la respuesta en un archivo JSON en la carpeta
         with open(os.path.join(folder_path, f"{direccion_SUC[7]}.json"), "w") as json_file:
             json.dump(response.json(), json_file, indent=2)
-
+        """
         if response.status_code >= 200 and response.status_code < 300:
             print("Creación de Sucursal EXITOSA")
         else:
             print("No se logró la Conexión.")
+        return response.json()
 
 
-    def eliminar_sucursal(self, id_sucursal, nombre_SUC):
-        url = f"https://api.mercadopago.com/users/{self.id_user}/stores/{id_sucursal}"
+    def eliminar_sucursal(self, id_sucursal):
+        try:
+            url = f"https://api.mercadopago.com/users/{self.id_user}/stores/{id_sucursal}"
 
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {self.access_token}',  # Modificar los TOKENS de identificación de cada cuenta.
-        }
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {self.access_token}',  # Modificar los TOKENS de identificación de cada cuenta.
+            }
 
-        # Realizar la solicitud para eliminar la sucursal
-        response = requests.delete(url, headers=headers)
+            # Realizar la solicitud para eliminar la sucursal
+            response = requests.delete(url, headers=headers)
+            return response.status_code
+        except:
+            print(response)
 
-        if response.status_code >= 200 and response.status_code < 300:
-            print(f"Eliminación de Sucursal EXITOSA {response.status_code}")
-
-            # Eliminar el archivo JSON correspondiente a la sucursal
-            folder_path = "SUCURSALES_JSON"
-            json_file_path = os.path.join(folder_path, f"{nombre_SUC}.json")
-            
-
-            #IF A ELIMINAR
-            if os.path.exists(json_file_path):
-                os.remove(json_file_path)
-                print(f"Archivo JSON de la Sucursal {id_sucursal} eliminado.")
-            else:
-                print(f"Archivo JSON de la Sucursal {id_sucursal} no encontrado.")
-        else:
-            print("No se logró la Conexión.")
-
-    def crear_caja(self, nombre_SUC):
+    def crear_caja(self, external_store_id, store_id):
         url = 'https://api.mercadopago.com/pos'
 
         hedears = {
@@ -108,27 +104,43 @@ class Conexion_Api:
         POSload = {
             "category": int(datos_CAJA[0]),  # Convertir el conjunto a lista
             "external_id": str(datos_CAJA[1]),  # Asegurarse de que los datos sean strings si es necesario
-            "external_store_id": str(datos_CAJA[2]),
+            "external_store_id": external_store_id,
             "fixed_amount": True,
-            "name": str(datos_CAJA[3])
+            "name": str(datos_CAJA[2]),
+            "store_id": int(store_id)
         }
 
 
         response = requests.post(url, headers=hedears, data=json.dumps(POSload))
         print(response)
-        # Crear la carpeta si no existe
+        
+        #CREAR ARCHIVO .JSON CON LA RESPUESTA Y GUARDARLO DE FORMA LOCAL (nombre_SUC)
+        """# Crear la carpeta si no existe
         folder_path = f"{nombre_SUC}_CAJAS_JSON"
         os.makedirs(folder_path, exist_ok=True)
 
         # Guardar la respuesta en un archivo JSON en la carpeta
         with open(os.path.join(folder_path, f"{datos_CAJA[3]}.json"), "w") as json_file:
-            json.dump(response.json(), json_file, indent=2)
-        
-
+            json.dump(response.json(), json_file, indent=2)      
+        """
         if response.status_code >= 200 and response.status_code < 300:
             print("Creación de Caja EXITOSA")
         else:
             print(f"No se logró la Conexión. ERROR {response.status_code} \t\n {response}")
+            
+        return response.json()
+    
+    def eliminar_caja(self, idPOS):
+        url = f"https://api.mercadopago.com/pos/{idPOS}"
+        
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {self.access_token}'
+        }
+        
+        response = requests.delete(url, headers=headers)
+        
+        return response.status_code
             
     #ORDEN ATENDIDA
     def crear_orden(self, precio, external_id, factura):
@@ -145,6 +157,15 @@ class Conexion_Api:
             "items": [
                 {
                 "id": 0000000,
+                "title": "Shampoo",
+                "currency_id": "ARG",
+                "unit_price": precio,
+                "quantity": 1,
+                "description": "Almendras",
+                "picture_url": "https://previews.123rf.com/images/freaktor/freaktor2002/freaktor200200004/139383340-verduras-en-carro-de-compras-carro-supermercado-logo-icono-dise%C3%B1o-vector.jpg"
+                },
+                {
+                "id": 0,
                 "title": "ANONIMO",
                 "currency_id": "ARG",
                 "unit_price": precio,
@@ -153,10 +174,11 @@ class Conexion_Api:
                 "picture_url": "https://previews.123rf.com/images/freaktor/freaktor2002/freaktor200200004/139383340-verduras-en-carro-de-compras-carro-supermercado-logo-icono-dise%C3%B1o-vector.jpg"
                 },
             ],
-            "notification_url": "https://c401-186-122-104-145.ngrok-free.app/"
+            "notification_url": "https://b71c-186-122-104-145.ngrok-free.app/"
             }
         
         response = requests.post(url, headers=headers, data=json.dumps(payload))
+        """
         # Crear la carpeta si no existe
         folder_path = "CREAR_PAGOS"
         os.makedirs(folder_path, exist_ok=True)
@@ -165,7 +187,8 @@ class Conexion_Api:
         with open(os.path.join(folder_path, f"{external_id}.json"), "w") as json_file:
             json.dump(response.json(), json_file, indent=2)
         print(response.status_code)
-        return response.status_code, payload["external_reference"], external_id
+        """
+        return response
     
     #NO FUNCIONA
     #CREAR LA ORDEN (VERSION 2.0) PODEMOS OBTENER LA ORDEN DE COMPRA

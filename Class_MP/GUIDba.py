@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from connect_db import ConexionMySQL
+from Class_MP.database import ConexionMySQL
 
 class InterfazLogin:
     def __init__(self, root):

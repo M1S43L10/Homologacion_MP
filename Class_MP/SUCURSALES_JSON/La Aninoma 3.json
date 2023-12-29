@@ -1,0 +1,6 @@
+{
+  "error": "bad_request",
+  "message": "external id 'SUC001' is already assigned to this user 1588285685",
+  "status": 400,
+  "causes": []
+}

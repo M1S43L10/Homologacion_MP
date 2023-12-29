@@ -12,6 +12,5 @@ def direccion_suc():
 def datos_caja():
     categoria = int(input("Categoria: "))
     external_id = input("ID Externo: ")
-    external_store_id = input("ID Tienda: ")
     name = input("Nombre Caja: ")
-    return categoria, external_id, external_store_id, name
+    return categoria, external_id, name

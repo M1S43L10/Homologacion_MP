@@ -1,5 +1,5 @@
 {
-  "id": "1588285685-72836081-2b0d-4c47-a3c3-fb8b73908a4c",
+  "id": "1588285685-ec31bd58-b942-42d8-a975-7642d986724e",
   "items": [
     {
       "id": "0",
@@ -9,14 +9,14 @@
       "currency_id": "ARS",
       "unit_price": 1000,
       "description": "MERCADERIAS",
-      "picture_url": "https://http2.mlstatic.com/D_NQ_NP_617832-MLA73473008160_122023-F.jpg"
+      "picture_url": "https://http2.mlstatic.com/D_NQ_NP_907341-MLA73627398339_122023-F.jpg"
     }
   ],
   "collector_id": 1588285685,
   "collector": {},
   "total_amount": 1000,
   "amount": 1000,
-  "external_reference": "Factura-0015",
+  "external_reference": "Factura-0004",
   "operation_type": "regular_payment",
   "payment_methods": {
     "excluded_payment_methods": [],
@@ -35,13 +35,13 @@
   "marketplace": "NONE",
   "marketplace_fee": 0,
   "sponsor_id": 0,
-  "notification_url": "https://d3c6-186-122-104-145.ngrok-free.app/",
+  "notification_url": "https://2f70-186-122-104-145.ngrok-free.app/",
   "back_urls": {
     "success": "",
     "pending": "",
     "failure": ""
   },
-  "expiration_date_to": "2023-12-23T11:04:48.806-04:00",
+  "expiration_date_to": "2023-12-26T09:04:44.749-04:00",
   "expires": true,
   "additional_info": "",
   "site_id": "MLA",
