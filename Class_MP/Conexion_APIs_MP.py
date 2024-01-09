@@ -10,7 +10,7 @@ class Conexion_Api:
         self.id_user = id_user
         self.access_token = acess_token
 
-    def crear_sucursal(self, hs_abrir, hs_cerrar, nro_sucursal):
+    def crear_sucursal(self, datosSUC):
         # Url con el Id_User para crear la SUCURSAL
         url = f'https://api.mercadopago.com/users/{self.id_user}/stores'
 
@@ -20,42 +20,7 @@ class Conexion_Api:
             'Authorization': f'Bearer {self.access_token}',  # Modificar los TOKENS de identificación de cada cuenta.
         }
 
-        # Función que pide los datos de la Sucursal
-        direccion_SUC = direccion_suc()
-
-        SUCload = {
-            'business_hours': {
-                'monday': [
-                    {
-                        'open': f'{hs_abrir}',
-                        'close': f'{hs_cerrar}',
-                    },
-                ],
-                'tuesday': [
-                    {
-                        'open': f'{hs_abrir}',
-                        'close': f'{hs_cerrar}',
-                    },
-                ],
-                'sunday': [
-                    {
-                        'open': f'{hs_abrir}',
-                        'close': f'{hs_cerrar}',
-                    },
-                ],
-            },
-            'external_id': f'{nro_sucursal}',  # Asignar el id como se identificara a la sucursal para mas adelante
-            'location': {
-                'street_number': direccion_SUC[0],
-                'street_name': direccion_SUC[1],
-                'city_name': direccion_SUC[2],
-                'state_name': direccion_SUC[3],
-                'latitude': direccion_SUC[4],
-                'longitude': direccion_SUC[5],
-                'reference': direccion_SUC[6],
-            },
-            'name': direccion_SUC[7],
-        }
+        SUCload = datosSUC
 
         response = requests.post(url, headers=headers, data=json.dumps(SUCload))
         
@@ -71,9 +36,9 @@ class Conexion_Api:
         """
         if response.status_code >= 200 and response.status_code < 300:
             print("Creación de Sucursal EXITOSA")
+            return response
         else:
-            print("No se logró la Conexión.")
-        return response.json()
+            print(f"No se logró la Conexión. {response.status_code}")
 
 
     def eliminar_sucursal(self, id_sucursal):
@@ -91,7 +56,7 @@ class Conexion_Api:
         except:
             print(response)
 
-    def crear_caja(self, external_store_id, store_id):
+    def crear_caja(self, datosPOS):
         url = 'https://api.mercadopago.com/pos'
 
         hedears = {
@@ -99,9 +64,9 @@ class Conexion_Api:
             'Authorization': f'Bearer {self.access_token}'
         }
 
-        datos_CAJA = datos_caja()
-
-        POSload = {
+        POSload = datosPOS
+        """
+        {
             "category": int(datos_CAJA[0]),  # Convertir el conjunto a lista
             "external_id": str(datos_CAJA[1]),  # Asegurarse de que los datos sean strings si es necesario
             "external_store_id": external_store_id,
@@ -110,7 +75,7 @@ class Conexion_Api:
             "store_id": int(store_id)
         }
 
-
+        """
         response = requests.post(url, headers=hedears, data=json.dumps(POSload))
         print(response)
         
@@ -128,7 +93,7 @@ class Conexion_Api:
         else:
             print(f"No se logró la Conexión. ERROR {response.status_code} \t\n {response}")
             
-        return response.json()
+        return response
     
     def eliminar_caja(self, idPOS):
         url = f"https://api.mercadopago.com/pos/{idPOS}"
@@ -143,7 +108,7 @@ class Conexion_Api:
         return response.status_code
             
     #ORDEN ATENDIDA
-    def crear_orden(self, precio, external_id, factura):
+    def crear_orden(self, external_id, factura):
         
         url = f"https://api.mercadopago.com/mpmobile/instore/qr/{self.id_user}/{external_id}"
         
@@ -154,27 +119,8 @@ class Conexion_Api:
         }
         payload = {
             "external_reference": f"Factura-{factura}",
-            "items": [
-                {
-                "id": 0000000,
-                "title": "Shampoo",
-                "currency_id": "ARG",
-                "unit_price": precio,
-                "quantity": 1,
-                "description": "Almendras",
-                "picture_url": "https://previews.123rf.com/images/freaktor/freaktor2002/freaktor200200004/139383340-verduras-en-carro-de-compras-carro-supermercado-logo-icono-dise%C3%B1o-vector.jpg"
-                },
-                {
-                "id": 0,
-                "title": "ANONIMO",
-                "currency_id": "ARG",
-                "unit_price": precio,
-                "quantity": 1,
-                "description": "MERCADERIAS",
-                "picture_url": "https://previews.123rf.com/images/freaktor/freaktor2002/freaktor200200004/139383340-verduras-en-carro-de-compras-carro-supermercado-logo-icono-dise%C3%B1o-vector.jpg"
-                },
-            ],
-            "notification_url": "https://b71c-186-122-104-145.ngrok-free.app/"
+            "items": listaITEMS("CHANGUITO", "https://previews.123rf.com/images/freaktor/freaktor2002/freaktor200200004/139383340-verduras-en-carro-de-compras-carro-supermercado-logo-icono-dise%C3%B1o-vector.jpg"),
+            "notification_url": "https://c8ee-186-122-104-145.ngrok-free.app/"
             }
         
         response = requests.post(url, headers=headers, data=json.dumps(payload))
@@ -316,6 +262,7 @@ class Conexion_Api:
             }
         
         response = requests.get(url=url, headers=headers)
+        """
         print(response.status_code)
         # Crear la carpeta si no existe
         folder_path = "OBTENER_PAGOS"
@@ -325,4 +272,5 @@ class Conexion_Api:
         with open(os.path.join(folder_path, f"{self.id_user}.json"), "w") as json_file:
             json.dump(response.json(), json_file, indent=2)
         print(response.status_code)
-        return response.status_code
+        """
+        return response

@@ -1,0 +1,63 @@
+{
+  "id": "1613246141-f9ea7aa8-af04-4144-ae7a-4d124efe3b19",
+  "items": [
+    {
+      "id": "0",
+      "category_id": "",
+      "title": "Milanesa",
+      "quantity": 1,
+      "currency_id": "ARS",
+      "unit_price": 1250,
+      "description": "Pollo",
+      "picture_url": "https://http2.mlstatic.com/D_NQ_NP_741062-MLA73708117989_122023-F.jpg"
+    },
+    {
+      "id": "11111111",
+      "category_id": "",
+      "title": "Costeleta",
+      "quantity": 1,
+      "currency_id": "ARS",
+      "unit_price": 1500,
+      "description": "Ternera",
+      "picture_url": "https://http2.mlstatic.com/D_NQ_NP_741062-MLA73708117989_122023-F.jpg"
+    }
+  ],
+  "collector_id": 1613246141,
+  "collector": {},
+  "total_amount": 2750,
+  "amount": 2750,
+  "external_reference": "Factura-00043",
+  "operation_type": "regular_payment",
+  "payment_methods": {
+    "excluded_payment_methods": [],
+    "excluded_payment_types": [
+      {
+        "id": "digital_wallet"
+      },
+      {
+        "id": "ticket"
+      },
+      {
+        "id": "atm"
+      }
+    ]
+  },
+  "marketplace": "NONE",
+  "marketplace_fee": 0,
+  "sponsor_id": 0,
+  "notification_url": "https://b71c-186-122-104-145.ngrok-free.app/",
+  "back_urls": {
+    "success": "",
+    "pending": "",
+    "failure": ""
+  },
+  "expiration_date_to": "2023-12-30T10:42:21.578-04:00",
+  "expires": true,
+  "additional_info": "",
+  "site_id": "MLA",
+  "client_id": 3422573537375961,
+  "processing_modes": [
+    "aggregator"
+  ],
+  "internal_metadata": {}
+}

@@ -41,22 +41,19 @@ class ConexionSybase:
             
         
     #MANEJOS DE TABLAS    
-    def crear_tabla(self, nombre_tabla):
+    def crear_tabla_MPQRCODE_CLIENTE(self):
         try:
             self.conectar()
             query = f"""
-                CREATE TABLE {nombre_tabla} (
-                    ID INT IDENTITY PRIMARY KEY,
-                    FECHA_CREACION DATETIME,
-                    NRO_FACTURA VARCHAR(255),
-                    PUNTO_VENTA VARCHAR(255),
-                    FECHA_PAGO DATETIME,
-                    ID_PAGO VARCHAR(255),
+                CREATE TABLE MPQRCODE_CLIENTE (
+                    idINCREMET INT IDENTITY PRIMARY KEY,
+                    idUSER VARCHAR(255),
+                    AUTH_TOKEN VARCHAR(255),
                 )
             """
             self.cursor.execute(query)
             self.conexion.commit()
-            print(f'Tabla {nombre_tabla} creada con éxito.')
+            print(f'Tabla MPQRCODE_CLIENTE creada con éxito.')
         except Exception as e:
             print(f'Error al crear la tabla: {e}')
         finally:
@@ -176,6 +173,25 @@ class ConexionSybase:
         finally:
             self.desconectar()
             
+    def obtener_nombres_columnas(self, tabla):
+        try:
+            self.conectar()
+            with self.conexion.cursor() as cursor:
+                # Obtener información sobre las columnas de la tabla
+                cursor.execute(f"SELECT * FROM {tabla} WHERE 1=0")
+                column_info = cursor.description
+
+                # Extraer nombres de las columnas
+                nombres_columnas = [column[0] for column in column_info]
+
+                return nombres_columnas
+        except pypyodbc.Error as err:
+            print(f"Error al obtener nombres de columnas: {err}")
+            return None
+        finally:
+            self.desconectar()
+
+            
     #----------------------------------------------------TABLAS QUE TRABAJAN JUNTOSA PARA LA OBTENCIÓN DEL PAGO----------------------------------------------------
 
     def crear_tabla_MPQRCODE_CREARORDEN(self):
@@ -187,7 +203,7 @@ class ConexionSybase:
                     date_creation DATETIME,
                     external_reference VARCHAR(255) PRIMARY KEY,
                     external_idPOS VARCHAR(255),
-                    id BIGINT,
+                    id VARCHAR(255),
                     collector_id BIGINT, 
                     collector VARCHAR(255), 
                     total_amount BIGINT, 
@@ -225,13 +241,12 @@ class ConexionSybase:
                     quantity BIGINT,
                     currency_id VARCHAR(255),
                     unit_price FLOAT,
-                    description VARCHAR(255),
-                    picture_url VARCHAR(255)
+                    description VARCHAR(255)
                 )
             """
             self.cursor.execute(query)
             self.conexion.commit()
-            print("Tabla MPQRCODE_CREARORDEN creada con éxito.")
+            print("Tabla MPQRCODE_CREARORDEN_items creada con éxito.")
         except Exception as e:
             print(f"Error al crear la tabla: {e}")
         finally:
@@ -267,20 +282,9 @@ class ConexionSybase:
             query = """
                 CREATE TABLE MPQRCODE_OBTENERPAGO (
                     idINCREMET INT IDENTITY PRIMARY KEY, 
-                    accounts_info VARCHAR(255), 
-                    acquirer_reconciliation VARCHAR(255), 
-                    additional_info VARCHAR(255), 
-                    authorization_code VARCHAR(255), 
-                    binary_mode VARCHAR(255), 
-                    brand_id VARCHAR(255), 
-                    build_version VARCHAR(255), 
-                    call_for_authorize_id VARCHAR(255), 
-                    captured VARCHAR(255), 
-                    card VARCHAR(255), 
-                    charges_details VARCHAR(255), 
+                    external_reference VARCHAR(255),
+                    external_idPOS VARCHAR(255),
                     collector_id BIGINT, 
-                    corporation_id VARCHAR(255), 
-                    counter_currency VARCHAR(255), 
                     coupon_amount BIGINT, 
                     currency_id VARCHAR(255), 
                     date_approved VARCHAR(255), 
@@ -288,11 +292,7 @@ class ConexionSybase:
                     date_last_updated VARCHAR(255), 
                     date_of_expiration VARCHAR(255), 
                     deduction_schema VARCHAR(255), 
-                    description VARCHAR(255), 
-                    differential_pricing_id VARCHAR(255), 
-                    external_reference VARCHAR(255), 
-                    fee_details VARCHAR(255), 
-                    financing_group VARCHAR(255), 
+                    description VARCHAR(255),
                     id BIGINT, 
                     installments INT, 
                     integrator_id VARCHAR(255), 
@@ -300,34 +300,24 @@ class ConexionSybase:
                     live_mode VARCHAR(255), 
                     marketplace_owner VARCHAR(255), 
                     merchant_account_id VARCHAR(255), 
-                    merchant_number VARCHAR(255), 
-                    metadata VARCHAR(255), 
-                    money_release_date VARCHAR(255),
-                    money_release_schema VARCHAR(255),
-                    money_release_status VARCHAR(255), 
-                    notification_url VARCHAR(255), 
-                    operation_type VARCHAR(255), 
-                    ordermp VARCHAR(255), 
-                    payer VARCHAR(255), 
-                    payment_method  VARCHAR(255), 
-                    payment_method_id  VARCHAR(255), 
-                    payment_type_id  VARCHAR(255), 
-                    platform_id  VARCHAR(255), 
-                    point_of_interaction  VARCHAR(255),
+                    merchant_number VARCHAR(255),
+                    order_id VARCHAR(255),
+                    order_type VARCHAR(255),
+                    payer_id VARCHAR(255),
+                    payment_metodo_id VARCHAR(255),
+                    payment_metodo_issuer_id VARCHAR(255),
+                    payment_metodo_type VARCHAR(255),
                     pos_id  VARCHAR(255), 
-                    processing_mode  VARCHAR(255), 
-                    refunds  VARCHAR(255), 
+                    processing_mode  VARCHAR(255),
                     shipping_amount BIGINT, 
                     sponsor_id  VARCHAR(255), 
-                    statement_descriptor VARCHAR(255), 
                     status  VARCHAR(255), 
                     status_detail  VARCHAR(255), 
-                    store_id  VARCHAR(255), 
-                    tags  VARCHAR(255), 
+                    store_id  VARCHAR(255),
                     taxes_amount BIGINT, 
                     transaction_amount BIGINT, 
                     transaction_amount_refunded BIGINT, 
-                    transaction_details VARCHAR(255)
+                    transaction_details_total_paid_amount VARCHAR(255)
                 )
             """
             self.cursor.execute(query)
@@ -518,6 +508,23 @@ class ConexionSybase:
             print(f"Error al insertar datos: {err}")
         finally:
             self.desconectar()
+            
+    def actualizar_datos(self, tabla, datos, condicion):
+        try:
+            self.conectar()
+            with self.conexion.cursor() as cursor:
+                # Construir la consulta SQL de actualización
+                asignaciones = ", ".join([f'"{col}" = \'{v}\'' if not isinstance(v, dict) else f'"{col}" = \'{json.dumps(v)}\'' for col, v in datos.items()])
+                consulta_update = f'UPDATE {tabla} SET {asignaciones} WHERE idINCREMET = {condicion}'
+                cursor.execute(consulta_update)
+                self.conexion.commit()
+
+                print(f"Datos actualizados en la tabla '{tabla}' exitosamente.")
+
+        except pypyodbc.Error as err:
+            print(f"Error al actualizar datos: {err}")
+        finally:
+            self.desconectar()
 
 #/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ INSERTAR DATOS DE SUCURSAL #/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
     def inicializar_tabla_MPQRCODE_SUCURSAL(self, id):
@@ -610,6 +617,7 @@ class ConexionSybase:
             print(f"Error al actualizar external_id: {err}")
         finally:
             self.desconectar()
+            
 
     """
     #PRUEBAS QUE YA NO SE USAN
@@ -691,13 +699,13 @@ class ConexionSybase:
             self.conectar()  # Asegúrate de conectar antes de ejecutar la consulta
 
             with self.conexion.cursor() as cursor:
-                query = f"SELECT ID FROM MERCHANTORDEN WHERE NRO_FACTURA = '{numero_factura}' AND PUNTO_VENTA = '{punto_venta}'"
+                query = f"SELECT idINCREMET FROM MPQRCODE_CREARORDEN WHERE external_reference = '{numero_factura}' AND external_idPOS = '{punto_venta}'"
                 cursor.execute(query)
 
                 # Obtener el resultado de la consulta
                 resultado_id_orden = cursor.fetchone()
 
-                query = f"SELECT * FROM MERCHANTPAGO WHERE ID = '{resultado_id_orden[0]}'"
+                query = f"SELECT data FROM MPQRCODE_RESPUESTAPOST WHERE idINCREMET = '{resultado_id_orden[0]}'"
                 cursor.execute(query)
 
                 # Obtener el resultado de la consulta
@@ -710,13 +718,26 @@ class ConexionSybase:
                     return id_pago
                 else:
                     # Si no se encontró ninguna coincidencia, devolver None
-                    print(f"No se encontró una fila con NRO_FACTURA='{numero_factura}' y PUNTO_VENTA='{punto_venta}'.")
+                    print(f"TODAVIA NO SE HA RECIBIDO ID DE PAGO...")
                     return None
         except pypyodbc.Error as err:
             print(f"Error al obtener el ID de compra: {err}")
             return None
         finally:
             self.desconectar()  # Asegúrate de desconectar incluso si hay un error
+            
+    def obtener_todos_los_external_id(self, tabla):
+        try:
+            self.conectar()
+            with self.conexion.cursor() as cursor:
+                query = f"SELECT external_id FROM {tabla}"
+                cursor.execute(query)
+                resultados = cursor.fetchall()
+                return [resultado[0] for resultado in resultados]
+        except Exception as e:
+            print(f"Error al obtener los EXTERNALS ID: {e}")
+        finally:
+            self.desconectar()
 
     def obtener_valor_id_por_idincremet(self, idincremet, nombre_tabla):
         try:
@@ -781,7 +802,38 @@ class ConexionSybase:
         except pypyodbc.Error as err:
             print(f"Error al obtener el valor de 'id': {err}")
             return None
-            
+        
+    def specify_search(self, nombre_tabla, nombre_columna, condicion):
+        try:
+            self.conectar()
+            with self.conexion.cursor() as cursor:
+                # Consulta para obtener el valor de la columna 'id' por 'condicion'
+                query = f"SELECT {nombre_columna} FROM {nombre_tabla} WHERE idINCREMET = '{condicion}'"
+                cursor.execute(query)
+                resultado = cursor.fetchone()
+
+                if resultado is not None:
+                    id_valor = resultado[0]
+                    return id_valor
+                else:
+                    return None
+        except pypyodbc.Error as err:
+            print(f"Error al obtener el valor de 'id': {err}")
+            return None
+        
+    def contar_registros(self, tabla):
+        try:
+            self.conectar()
+            with self.conexion.cursor() as cursor:
+                consulta = f'SELECT COUNT(*) FROM {tabla}'
+                cursor.execute(consulta)
+                resultado = cursor.fetchone()
+                return resultado[0] if resultado else 0
+        except pypyodbc.Error as err:
+            print(f"Error al contar registros en la tabla '{tabla}': {err}")
+            return 0
+        finally:
+            self.desconectar()
 
 #/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ ELIMINAR DATOS DE CAJAS #/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
     def eliminar_filas(self, tabla, columna, external_id):

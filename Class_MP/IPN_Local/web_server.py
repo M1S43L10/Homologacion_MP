@@ -1,4 +1,5 @@
 from flask import Flask, request
+import json
 import sys
 sys.path.append(r"C:\Users\Op_1111\Desktop\Codigos_GitHub\Homologacion_MP")
 # Importa directamente desde Class_MP
@@ -34,20 +35,29 @@ conexion_sybase = ConexionSybase(**configuracion_sybase)
 @app.route('/', methods=['POST'])
 def index():
     global id_value  # Asegura que las variables sean tratadas como globales
-
+    dictPOST = None
     try:
         data = request.get_json()
+        print("Received JSON:", data)  # Agrega esta línea para imprimir el JSON en la consola
+
         # Verifica si existe la clave "data" y su valor tiene la clave "id"
         if 'data' in data and 'id' in data['data']:
-            # Bloquea el acceso a la variable compartida
-            with lock:
-                id_value = data['data']['id']
-                conexion_sybase.insertar_datos_MERCHANTPAGO(formato_fecha, id_value)
-                print(f'VALOR ACTUALIZADO EN LA BASE DE DATOS')
-
+            id_increment = conexion_sybase.inicializar_tablas_OBTIENEIDINCREMET("MPQRCODE_RESPUESTAPOST", "action", data['action'])
+            dict_valor = {}
+            for clave_json, valor_json in data.items():  # Cambio aquí
+                if clave_json == 'data':
+                    dict_valor[clave_json] = valor_json['id']
+                else:
+                    dict_valor[clave_json] = valor_json
+            conexion_sybase.actualizar_datos("MPQRCODE_RESPUESTAPOST", dict_valor, id_increment)
+            print(dict_valor)
+            print("AGREGADOS EN EL DBA")
         return 'OK'
     except Exception as e:
         print(f"Error al procesar la solicitud: {str(e)}")
         return 'Error', 500
+
+
 if __name__ == '__main__':
     app.run(port=5000)
+
