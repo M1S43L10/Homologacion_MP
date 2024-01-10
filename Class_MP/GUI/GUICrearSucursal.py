@@ -57,21 +57,17 @@ class CrearSucursalApp:
             child.destroy()
 
         ttk.Label(page, text="Ingresa el External ID de la Sucursal:").place(x=60, y=60, anchor='w')
-        entry_external_id = ttk.Entry(page, font=('Helvetica', 9), textvariable=self.external_id_var)
-        entry_external_id.place(x=280, y=60, anchor='w')
+        self.external_id_var = ttk.Entry(page, font=('Helvetica', 9), textvariable=self.external_id_var)
+        self.external_id_var.place(x=280, y=60, anchor='w')
 
         ttk.Label(page, text="Ingresa el Nombre de la Sucursal:").place(x=60, y=90, anchor='w')
-        entry_nombre_sucursal = ttk.Entry(page, font=('Helvetica', 9), textvariable=self.nombre_sucursal_var)
-        entry_nombre_sucursal.place(x=280, y=90, anchor='w')
+        self.nombre_sucursal_var = ttk.Entry(page, font=('Helvetica', 9), textvariable=self.nombre_sucursal_var)
+        self.nombre_sucursal_var.place(x=280, y=90, anchor='w')
 
         # Configurar la columna 0 para expandirse verticalmente
         page.columnconfigure(0, weight=1)
 
         ttk.Button(page, text="Siguiente", command=self.pages[0]["next"]).place(x=225, y=120, anchor='w')
-
-
-
-
 
     def page2_content(self, page):
         # Destruir todos los widgets existentes en la página
@@ -140,6 +136,7 @@ class CrearSucursalApp:
     def page3_next(self):
         self.notebook.select(self.notebook.index(self.notebook.select()) + 1)
 
+
     def page4_content(self, page):
         external_id = self.external_id_var.get()
         nombre_sucursal = self.nombre_sucursal_var.get()
@@ -148,8 +145,6 @@ class CrearSucursalApp:
         ttk.Label(page, text=f"Nombre de la Sucursal: {nombre_sucursal}").grid(row=1, column=0, padx=10, pady=5, sticky='w')
 
         self.display_address_info(page)
-        self.display_schedule_info(page)
-
         for dia, horarios in self.selected_days.items():
             ttk.Label(page, text=f"{dia} - Apertura: {horarios[0]['open']}, Cierre: {horarios[0]['close']}").grid(row=9, column=0, padx=10, pady=5, sticky='w')
 
@@ -170,21 +165,40 @@ class CrearSucursalApp:
 
 
     def create_address_widgets(self, page):
-        entries = [
-            ("Número de la dirección:", self.entry_direccion_numero_var),
-            ("Nombre de la dirección:", self.entry_direccion_nombre_var),
-            ("Nombre de la ciudad:", self.entry_nombre_ciudad_var),
-            ("Nombre de la provincia:", self.entry_nombre_provincia_var),
-            ("Latitud:", self.entry_latitud_var),
-            ("Longitud:", self.entry_longitud_var),
-            ("Referencia:", self.entry_referencia_var)
-        ]
+        # Número de la dirección
+        ttk.Label(page, text="Número de la dirección:").grid(row=0, column=0, padx=10, pady=5, sticky='w')
+        self.entry_direccion_nombre_var = ttk.Entry(page, font=('Helvetica', 12), textvariable=self.entry_direccion_numero_var)
+        self.entry_direccion_nombre_var.grid(row=0, column=1, padx=10, pady=5, sticky='ew')
 
-        for row, (label_text, var) in enumerate(entries):
-            ttk.Label(page, text=label_text).grid(row=row, column=0, padx=10, pady=5, sticky='w')
-            entry = ttk.Entry(page, font=('Helvetica', 12), textvariable=var)
-            entry.grid(row=row, column=1, padx=10, pady=5, sticky='ew')
+        # Nombre de la dirección
+        ttk.Label(page, text="Nombre de la dirección:").grid(row=1, column=0, padx=10, pady=5, sticky='w')
+        self.entry_direccion_nombre_var = ttk.Entry(page, font=('Helvetica', 12), textvariable=self.entry_direccion_nombre_var)
+        self.entry_direccion_nombre_var.grid(row=1, column=1, padx=10, pady=5, sticky='ew')
 
+        # Nombre de la ciudad
+        ttk.Label(page, text="Nombre de la ciudad:").grid(row=2, column=0, padx=10, pady=5, sticky='w')
+        self.entry_nombre_ciudad_var = ttk.Entry(page, font=('Helvetica', 12), textvariable=self.entry_nombre_ciudad_var)
+        self.entry_nombre_ciudad_var.grid(row=2, column=1, padx=10, pady=5, sticky='ew')
+
+        # Nombre de la provincia
+        ttk.Label(page, text="Nombre de la provincia:").grid(row=3, column=0, padx=10, pady=5, sticky='w')
+        self.entry_nombre_provincia_var = ttk.Entry(page, font=('Helvetica', 12), textvariable=self.entry_nombre_provincia_var)
+        self.entry_nombre_provincia_var.grid(row=3, column=1, padx=10, pady=5, sticky='ew')
+
+        # Latitud
+        ttk.Label(page, text="Latitud:").grid(row=4, column=0, padx=10, pady=5, sticky='w')
+        self.entry_latitud_var = ttk.Entry(page, font=('Helvetica', 12), textvariable=self.entry_latitud_var)
+        self.entry_latitud_var.grid(row=4, column=1, padx=10, pady=5, sticky='ew')
+
+        # Longitud
+        ttk.Label(page, text="Longitud:").grid(row=5, column=0, padx=10, pady=5, sticky='w')
+        self.entry_longitud_var = ttk.Entry(page, font=('Helvetica', 12), textvariable=self.entry_longitud_var)
+        self.entry_longitud_var.grid(row=5, column=1, padx=10, pady=5, sticky='ew')
+
+        # Referencia
+        ttk.Label(page, text="Referencia:").grid(row=6, column=0, padx=10, pady=5, sticky='w')
+        self.entry_referencia_var = ttk.Entry(page, font=('Helvetica', 12), textvariable=self.entry_referencia_var)
+        self.entry_referencia_var.grid(row=6, column=1, padx=10, pady=5, sticky='ew')
 
     def display_address_info(self, page):
         ttk.Label(page, text=f"Número de la dirección: {self.entry_direccion_numero_var.get()}").grid(row=2, column=0, padx=10, pady=5, sticky='w')
@@ -268,6 +282,12 @@ class CrearSucursalApp:
                 if respuesta.status_code >= 200 and respuesta.status_code < 300:
                     messagebox.showinfo("Éxito", "Sucursal creada con éxito.")
                     self.ventana_creacion_sucursal.destroy()  # Cierra la ventana principal al crear con éxito
+                    
+                elif respuesta.status_code >= 300 and respuesta.status_code < 500:
+                    # Muestra detalles de error específicos
+                    error_message = f"Error al crear la sucursal. Verifica la respuesta.\n\n"
+                    error_message += self.get_api_error_message(respuesta)
+                    messagebox.showerror("Error", error_message)
                 else:
                     # Muestra detalles de error específicos
                     error_message = f"Error al crear la sucursal. Verifica la respuesta.\n\n"
@@ -295,33 +315,3 @@ class CrearSucursalApp:
             # Manejo genérico de excepciones para garantizar que la aplicación no se bloquee
             messagebox.showerror("Error", f"Error inesperado: {str(e)}")
             logging.exception("Error inesperado al crear sucursal.")
-    
-        """
-    def inicializar_page2(self):
-        ttk.Label(self.pages[1]["page"], text="Selecciona los días de la semana:").grid(row=0, column=0, padx=10, pady=5, sticky='w')
-
-        dias_semana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
-        self.listbox_dias = tk.Listbox(self.pages[1]["page"], selectmode=tk.MULTIPLE, height=len(dias_semana))
-        for dia in dias_semana:
-            self.listbox_dias.insert(tk.END, dia)
-        self.listbox_dias.grid(row=0, column=1, padx=10, pady=5, sticky='ew')
-
-        self.centrar_contenido(self.pages[1]["page"])
-
-        ttk.Label(self.pages[1]["page"], text="Horarios de apertura y cierre:").grid(row=1, column=0, padx=10, pady=5, sticky='w')
-
-        horarios = ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00',
-                    '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00',
-                    '23:00']
-        combo_apertura = ttk.Combobox(self.pages[1]["page"], values=horarios, state="readonly")
-        combo_apertura.grid(row=1, column=1, padx=10, pady=5, sticky='ew')
-        combo_apertura.current(0)
-
-        ttk.Label(self.pages[1]["page"], text=" - ").grid(row=1, column=2, pady=5)
-
-        combo_cierre = ttk.Combobox(self.pages[1]["page"], values=horarios, state="readonly")
-        combo_cierre.grid(row=1, column=3, padx=10, pady=5, sticky='ew')
-        combo_cierre.current(0)
-
-        ttk.Button(self.pages[1]["page"], text="Anterior", command=self.pages[1]["prev"]).grid(row=2, column=0, pady=10)
-        ttk.Button(self.pages[1]["page"], text="Siguiente", command=self.pages[1]["next"]).grid(row=2, column=3, pady=10)"""

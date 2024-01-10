@@ -1,9 +1,12 @@
 from flask import Flask, request
 import json
+import os
 import sys
-sys.path.append(r"C:\Users\Op_1111\Desktop\Codigos_GitHub\Homologacion_MP")
-# Importa directamente desde Class_MP
-from Class_MP.database import ConexionSybase
+directorio_script = os.path.dirname(os.path.abspath(__file__))
+# Construir la ruta relativa al directorio que deseas agregar
+ruta_relativa = os.path.join(directorio_script, "..")
+sys.path.append(ruta_relativa)
+from database import ConexionSybase
 import threading
 from datetime import datetime, timedelta
 
@@ -42,7 +45,7 @@ def index():
 
         # Verifica si existe la clave "data" y su valor tiene la clave "id"
         if 'data' in data and 'id' in data['data']:
-            id_increment = conexion_sybase.inicializar_tablas_OBTIENEIDINCREMET("MPQRCODE_RESPUESTAPOST", "action", data['action'])
+            id_increment = conexion_sybase.inicializar_tablas_OBTIENEidINCREMENT("MPQRCODE_RESPUESTAPOST", "action", data['action'])
             dict_valor = {}
             for clave_json, valor_json in data.items():  # Cambio aquí
                 if clave_json == 'data':

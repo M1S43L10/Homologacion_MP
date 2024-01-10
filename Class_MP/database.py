@@ -41,12 +41,34 @@ class ConexionSybase:
             
         
     #MANEJOS DE TABLAS    
+    
+    def crear_tabla_MPQRCODE_CONEXIONPROGRAMAS(self):
+        try:
+            self.conectar()
+            query = f"""
+                CREATE TABLE MPQRCODE_CONEXIONPROGRAMAS (
+                    nro_factura VARCHAR(255) PRIMARY KEY,
+                    tipo_factura INT,
+                    monto_pagar MONEY,
+                    status BIT,
+                    response FLOAT,
+                    description VARCHAR(255)
+                )
+            """
+            self.cursor.execute(query)
+            self.conexion.commit()
+            print(f'Tabla MPQRCODE_CONEXIONPROGRAMAS creada con éxito.')
+        except Exception as e:
+            print(f'Error al crear la tabla: {e}')
+        finally:
+            self.desconectar()
+    
     def crear_tabla_MPQRCODE_CLIENTE(self):
         try:
             self.conectar()
             query = f"""
                 CREATE TABLE MPQRCODE_CLIENTE (
-                    idINCREMET INT IDENTITY PRIMARY KEY,
+                    idINCREMENT INT IDENTITY PRIMARY KEY,
                     idUSER VARCHAR(255),
                     AUTH_TOKEN VARCHAR(255),
                 )
@@ -64,7 +86,7 @@ class ConexionSybase:
             self.conectar()
             query = """
                 CREATE TABLE MPQRCODE_SUCURSAL (
-                    idINCREMET INT IDENTITY PRIMARY KEY, 
+                    idINCREMENT INT IDENTITY PRIMARY KEY, 
                     id VARCHAR(255), 
                     name VARCHAR(255), 
                     date_creation VARCHAR(255),
@@ -128,7 +150,7 @@ class ConexionSybase:
             self.conectar()
             query = """
                 CREATE TABLE MPQRCODE_CAJAS (
-                    idINCREMET INT IDENTITY PRIMARY KEY, 
+                    idINCREMENT INT IDENTITY PRIMARY KEY, 
                     id BIGINT, 
                     status VARCHAR(255), 
                     date_created VARCHAR(255), 
@@ -143,6 +165,7 @@ class ConexionSybase:
                     external_id VARCHAR(255), 
                     site VARCHAR(255), 
                     qr_code VARCHAR(255),
+                    picture__url VARCHAR(255)
                 ) 
             """
             self.cursor.execute(query)
@@ -199,7 +222,7 @@ class ConexionSybase:
             self.conectar()
             query = """
                 CREATE TABLE MPQRCODE_CREARORDEN (
-                    idINCREMET INT IDENTITY, 
+                    idINCREMENT INT IDENTITY, 
                     date_creation DATETIME,
                     external_reference VARCHAR(255) PRIMARY KEY,
                     external_idPOS VARCHAR(255),
@@ -241,7 +264,8 @@ class ConexionSybase:
                     quantity BIGINT,
                     currency_id VARCHAR(255),
                     unit_price FLOAT,
-                    description VARCHAR(255)
+                    description VARCHAR(255),
+                    picture_url VARCHAR(255)
                 )
             """
             self.cursor.execute(query)
@@ -257,7 +281,7 @@ class ConexionSybase:
             self.conectar()
             query = """
                 CREATE TABLE MPQRCODE_RESPUESTAPOST (
-                    idINCREMET INT IDENTITY PRIMARY KEY, 
+                    idINCREMENT INT IDENTITY PRIMARY KEY, 
                     action VARCHAR(255), 
                     api_version VARCHAR(255), 
                     data VARCHAR(255), 
@@ -281,7 +305,7 @@ class ConexionSybase:
             self.conectar()
             query = """
                 CREATE TABLE MPQRCODE_OBTENERPAGO (
-                    idINCREMET INT IDENTITY PRIMARY KEY, 
+                    idINCREMENT INT IDENTITY PRIMARY KEY, 
                     external_reference VARCHAR(255),
                     external_idPOS VARCHAR(255),
                     collector_id BIGINT, 
@@ -429,30 +453,30 @@ class ConexionSybase:
                     existe_columna = cursor.fetchone()[0] > 0
 
                     if existe_columna:
-                        # Verificar si existe una fila con el idINCREMET proporcionado
-                        consulta_fila = f"SELECT COUNT(*) FROM {nombre_tabla} WHERE idINCREMET = {id_increment}"
+                        # Verificar si existe una fila con el idINCREMENT proporcionado
+                        consulta_fila = f"SELECT COUNT(*) FROM {nombre_tabla} WHERE idINCREMENT = {id_increment}"
                         cursor.execute(consulta_fila)
                         existe_fila = cursor.fetchone()[0] > 0
 
                         if existe_fila:
                             # Insertar el dato en la fila correspondiente
-                            consulta_insertar = f"UPDATE {nombre_tabla} SET {nombre_columna} = '{dato}' WHERE idINCREMET = {id_increment}"
+                            consulta_insertar = f"UPDATE {nombre_tabla} SET {nombre_columna} = '{dato}' WHERE idINCREMENT = {id_increment}"
                             cursor.execute(consulta_insertar)
                             self.conexion.commit()
 
-                            print(f"Dato '{dato}' insertado en la fila con idINCREMET={id_increment} en la tabla '{nombre_tabla}'.")
+                            print(f"Dato '{dato}' insertado en la fila con idINCREMENT={id_increment} en la tabla '{nombre_tabla}'.")
                         else:
-                            # Insertar el dato en la fila correspondiente y establecer el idINCREMET
+                            # Insertar el dato en la fila correspondiente y establecer el idINCREMENT
                             consulta_insertar = f"INSERT INTO {nombre_tabla} ({nombre_columna}) VALUES ('{dato}')"
                             cursor.execute(consulta_insertar)
                             self.conexion.commit()
 
-                            # Obtener el idINCREMET recién asignado
+                            # Obtener el idINCREMENT recién asignado
                             consulta_id = f"SELECT @@IDENTITY"
                             cursor.execute(consulta_id)
                             id_increment_nuevo = cursor.fetchone()[0]
 
-                            print(f"Dato '{dato}' insertado en la fila con idINCREMET={id_increment_nuevo} en la tabla '{nombre_tabla}'.")
+                            print(f"Dato '{dato}' insertado en la fila con idINCREMENT={id_increment_nuevo} en la tabla '{nombre_tabla}'.")
                     else:
                         print(f"No existe la columna '{nombre_columna}' en la tabla '{nombre_tabla}'.")
             else:
@@ -466,7 +490,7 @@ class ConexionSybase:
 
     
     
-    def insertar_datos_obtener_idINCREMET(self, tabla, datos):
+    def insertar_datos_obtener_idINCREMENT(self, tabla, datos):
         try:
             self.conectar()
             with self.conexion.cursor() as cursor:
@@ -482,7 +506,7 @@ class ConexionSybase:
                 cursor.execute(consulta_id)
                 id_increment_insertado = cursor.fetchone()[0]
 
-                print(f"Datos insertados en la tabla '{tabla}' exitosamente. idINCREMET: {id_increment_insertado}")
+                print(f"Datos insertados en la tabla '{tabla}' exitosamente. idINCREMENT: {id_increment_insertado}")
 
                 return id_increment_insertado
         except pypyodbc.Error as err:
@@ -515,7 +539,7 @@ class ConexionSybase:
             with self.conexion.cursor() as cursor:
                 # Construir la consulta SQL de actualización
                 asignaciones = ", ".join([f'"{col}" = \'{v}\'' if not isinstance(v, dict) else f'"{col}" = \'{json.dumps(v)}\'' for col, v in datos.items()])
-                consulta_update = f'UPDATE {tabla} SET {asignaciones} WHERE idINCREMET = {condicion}'
+                consulta_update = f'UPDATE {tabla} SET {asignaciones} WHERE idINCREMENT = {condicion}'
                 cursor.execute(consulta_update)
                 self.conexion.commit()
 
@@ -531,14 +555,14 @@ class ConexionSybase:
         datos = {
             'id': id
         }
-        id_incrementado = self.insertar_datos_obtener_idINCREMET("MPQRCODE_SUCURSAL", datos)
+        id_incrementado = self.insertar_datos_obtener_idINCREMENT("MPQRCODE_SUCURSAL", datos)
         return id_incrementado
 
-    def inicializar_tablas_OBTIENEIDINCREMET(self, tabla, columna_inicial ,datos_inicializar):
+    def inicializar_tablas_OBTIENEidINCREMENT(self, tabla, columna_inicial ,datos_inicializar):
         datos = {
             columna_inicial: datos_inicializar
         }
-        id_incrementado = self.insertar_datos_obtener_idINCREMET(tabla, datos)
+        id_incrementado = self.insertar_datos_obtener_idINCREMENT(tabla, datos)
         return id_incrementado
     
     def insertar_datos_MPQRCODE_SUCURSAL_business_hours(self, idSUC, dia, open, close):
@@ -571,7 +595,7 @@ class ConexionSybase:
         datos = {
             'id': id
         }
-        id_incrementado = self.insertar_datos_obtener_idINCREMET("MPQRCODE_CAJAS", datos)
+        id_incrementado = self.insertar_datos_obtener_idINCREMENT("MPQRCODE_CAJAS", datos)
         return id_incrementado
     
     """
@@ -699,13 +723,13 @@ class ConexionSybase:
             self.conectar()  # Asegúrate de conectar antes de ejecutar la consulta
 
             with self.conexion.cursor() as cursor:
-                query = f"SELECT idINCREMET FROM MPQRCODE_CREARORDEN WHERE external_reference = '{numero_factura}' AND external_idPOS = '{punto_venta}'"
+                query = f"SELECT idINCREMENT FROM MPQRCODE_CREARORDEN WHERE external_reference = '{numero_factura}' AND external_idPOS = '{punto_venta}'"
                 cursor.execute(query)
 
                 # Obtener el resultado de la consulta
                 resultado_id_orden = cursor.fetchone()
 
-                query = f"SELECT data FROM MPQRCODE_RESPUESTAPOST WHERE idINCREMET = '{resultado_id_orden[0]}'"
+                query = f"SELECT data FROM MPQRCODE_RESPUESTAPOST WHERE idINCREMENT = '{resultado_id_orden[0]}'"
                 cursor.execute(query)
 
                 # Obtener el resultado de la consulta
@@ -739,21 +763,21 @@ class ConexionSybase:
         finally:
             self.desconectar()
 
-    def obtener_valor_id_por_idincremet(self, idincremet, nombre_tabla):
+    def obtener_valor_id_por_idINCREMENT(self, idINCREMENT, nombre_tabla):
         try:
             self.conectar()
             with self.conexion.cursor() as cursor:
-                # Consulta para obtener el valor de la columna 'id' por 'idINCREMET'
-                query = f"SELECT id FROM {nombre_tabla} WHERE idINCREMET = {idincremet}"
+                # Consulta para obtener el valor de la columna 'id' por 'idINCREMENT'
+                query = f"SELECT id FROM {nombre_tabla} WHERE idINCREMENT = {idINCREMENT}"
                 cursor.execute(query)
                 resultado = cursor.fetchone()
 
                 if resultado is not None:
                     id_valor = resultado[0]
-                    print(f"Valor de 'id' para idINCREMET={idincremet}: {id_valor}")
+                    print(f"Valor de 'id' para idINCREMENT={idINCREMENT}: {id_valor}")
                     return id_valor
                 else:
-                    print(f"No se encontró una fila con idINCREMET={idincremet}.")
+                    print(f"No se encontró una fila con idINCREMENT={idINCREMENT}.")
                     return None
         except pypyodbc.Error as err:
             print(f"Error al obtener el valor de 'id': {err}")
@@ -761,21 +785,21 @@ class ConexionSybase:
         finally:
             self.desconectar()
             
-    def obtener_valor_external_idPOS_por_idincremet(self, idincremet, nombre_tabla):
+    def obtener_valor_external_idPOS_por_idINCREMENT(self, idINCREMENT, nombre_tabla):
         try:
             self.conectar()
             with self.conexion.cursor() as cursor:
-                # Consulta para obtener el valor de la columna 'id' por 'idINCREMET'
-                query = f"SELECT external_id FROM {nombre_tabla} WHERE idINCREMET = {idincremet}"
+                # Consulta para obtener el valor de la columna 'id' por 'idINCREMENT'
+                query = f"SELECT external_id FROM {nombre_tabla} WHERE idINCREMENT = {idINCREMENT}"
                 cursor.execute(query)
                 resultado = cursor.fetchone()
 
                 if resultado is not None:
                     id_valor = resultado[0]
-                    print(f"Valor de 'external_id' para external_id={idincremet}: {id_valor}")
+                    print(f"Valor de 'external_id' para external_id={idINCREMENT}: {id_valor}")
                     return id_valor
                 else:
-                    print(f"No se encontró una fila con external_id={idincremet}.")
+                    print(f"No se encontró una fila con external_id={idINCREMENT}.")
                     return None
         except pypyodbc.Error as err:
             print(f"Error al obtener el valor de 'external_id': {err}")
@@ -808,7 +832,7 @@ class ConexionSybase:
             self.conectar()
             with self.conexion.cursor() as cursor:
                 # Consulta para obtener el valor de la columna 'id' por 'condicion'
-                query = f"SELECT {nombre_columna} FROM {nombre_tabla} WHERE idINCREMET = '{condicion}'"
+                query = f"SELECT {nombre_columna} FROM {nombre_tabla} WHERE idINCREMENT = '{condicion}'"
                 cursor.execute(query)
                 resultado = cursor.fetchone()
 

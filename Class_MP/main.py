@@ -1,8 +1,11 @@
-from conexiones import *
+import os
 import sys
-sys.path.append(r"C:\Users\Op_1111\Desktop\Codigos_GitHub\Homologacion_MP")
-from Class_MP.Conexion_APIs_MP import Conexion_Api
-from Class_MP.database import ConexionSybase
+directorio_script = os.path.dirname(os.path.abspath(__file__))
+# Construir la ruta relativa al directorio que deseas agregar
+ruta_relativa = os.path.join(directorio_script, "..")
+sys.path.append(ruta_relativa)
+from database import ConexionSybase
+from conexiones import Conexion_APP
 import time
 
 #-----------------------------------------------------------------------------------------------------------------
@@ -33,6 +36,8 @@ instanciacion.limpieza_tabla_TOTALsucursal()
 instanciacion.limpieza_tabla_TOTALcaja()
 instanciacion.eliminarOrdenesPostDBA()
 """
+#conexion_sybase.eliminar_tabla("MPQRCODE_CONEXIONPROGRAMAS")
+#conexion_sybase.crear_tabla_MPQRCODE_CONEXIONPROGRAMAS()
 
 """
 /*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*LIMPIEZA/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
@@ -78,11 +83,12 @@ instanciacion.creacionSUC(datosSUC)
 #instanciacion.crearCaja("SUC001")
 
 #/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*CREAR ORDEN/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
-"""pago = instanciacion.crearOrden("SUC001POS001")
+
+pago = instanciacion.crearOrden("SUC001POS001", "00000-1111111", "Changuito", 1000, "https://media.istockphoto.com/id/1205419959/es/vector/verduras-en-el-carro-de-la-compra-carrito-logotipo-icono-icono-vector-de-dise%C3%B1o.jpg?s=612x612&w=0&k=20&c=SFUApESf7KXEOLaVQrjUEihs0D8CJOy5nnqmDPQebGg=")
 id_pago = instanciacion.obteneridOrder(pago[0], pago[1])
 instanciacion.obtenerPago(id_pago, pago[0], pago[1])
 
-"""
+
 """
 conexion_sybase.eliminar_tabla("MPQRCODE_CLIENTE")
 conexion_sybase.crear_tabla_MPQRCODE_CLIENTE()"""

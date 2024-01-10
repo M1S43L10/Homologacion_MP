@@ -1,9 +1,6 @@
 import requests
 import json
 import os
-import sys
-sys.path.append(r"C:\Users\Op_1111\Desktop\Codigos_GitHub\Homologacion_MP")
-from Class_MP.direccion import *
 
 class Conexion_Api:
     def __init__(self, id_user, acess_token):
@@ -108,7 +105,7 @@ class Conexion_Api:
         return response.status_code
             
     #ORDEN ATENDIDA
-    def crear_orden(self, external_id, factura):
+    def crear_orden(self, external_id, factura, sucNAME, monto_pagar, picture_url):
         
         url = f"https://api.mercadopago.com/mpmobile/instore/qr/{self.id_user}/{external_id}"
         
@@ -119,8 +116,18 @@ class Conexion_Api:
         }
         payload = {
             "external_reference": f"Factura-{factura}",
-            "items": listaITEMS("CHANGUITO", "https://previews.123rf.com/images/freaktor/freaktor2002/freaktor200200004/139383340-verduras-en-carro-de-compras-carro-supermercado-logo-icono-dise%C3%B1o-vector.jpg"),
-            "notification_url": "https://c8ee-186-122-104-145.ngrok-free.app/"
+            "items": [
+                {
+                    'id': 000000000000,
+                    'title': sucNAME,
+                    'currency_id': "ARS",
+                    'unit_price': monto_pagar,
+                    'quantity': 1,
+                    'description': "QR_ATENDIDO",
+                    'picture_url': picture_url
+                }
+            ],
+            "notification_url": "https://e0e7-186-122-104-145.ngrok-free.app/"
             }
         
         response = requests.post(url, headers=headers, data=json.dumps(payload))

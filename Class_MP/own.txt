@@ -1,0 +1,29 @@
+09-01-2024
+Hable con Jose SantaCruz, le mostre como avanzamos en el proyecto. Le mostre el GUI, tanto del Main, Suc y Pos.
+Mostre como funcionaba lo de crear la orden, esperar la respuesta de MP y que esa respuesta se guarde en nuestra
+tabla MPQRCODE_RESPUESTAPOST. 
+
+Me dijo que vamos a cambiar para que no se le pase todos los items, sino solo el precio y el nro de Factura,
+title = MERCADOPAGO
+description = QR_ATENDIDO
+idMERCADERIA = 000001111122222
+
+¡¡¡Todavia no le mencione lo del IPN, como vamos a hacer porque es importante para que MERCADOPAGO nos de el id del pago!!!
+
+10-01-2024
+Creé la tabla MPQRCODE_CONEXIONPROGRAMAS = asi son los valores de almacenamiento
+nro_factura VARCHAR(255) PRIMARY KEY,
+tipo_factura INT,
+monto_pagar MONEY,
+status BIT,
+response FLOAT,
+description VARCHAR(255)
+
+
+Me aviso Jose que agrego un campo mas en nuestra tabla MPQRCODE_CONEXIONPROGRAMAS, que tipo de Factura, que da si es recibimos o tenemos que devolver dinero
+Modifique funcion crearOrden() de conexiones.py y crear_orden() de Conexion_APIs_MP.py, modifique lo que me pidio Jose de los items,
+ahora va a pedir nro_factura, monto_pagar, picture_url, que lo va pasar el GUI.
+
+RECORDATORIOS 
+Crear una funcion que pregunte a la tabla si el nro de factura ya existe registrado
+Una que guarde y almacene en que POS estamos trabajando

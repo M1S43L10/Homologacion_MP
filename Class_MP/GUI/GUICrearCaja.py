@@ -15,9 +15,6 @@ class CrearCajaApp:
         # Obtener todos los External IDs de la tabla MPQRCODE_SUCURSAL
         external_ids = self.obtener_todos_los_external_id('MPQRCODE_SUCURSAL')
 
-        # Variable para almacenar la selección del ComboBox
-        self.selected_external_id = tk.StringVar()
-
         # ComboBox con los resultados de la función
         self.combo_sucursal = ttk.Combobox(self.ventana_creacion_caja, values=external_ids, textvariable=self.selected_external_id)
         self.combo_sucursal.grid(row=0, column=1, padx=10, pady=5, sticky='ew')
@@ -36,7 +33,7 @@ class CrearCajaApp:
 
     def abrir_ventana_crear_pos(self):
         # Obtener el External ID seleccionado
-        selected_external_id = self.selected_external_id.get()
+        selected_external_id = self.combo_sucursal.get()
 
         if not selected_external_id:
             messagebox.showwarning("Advertencia", "Selecciona una sucursal primero.")

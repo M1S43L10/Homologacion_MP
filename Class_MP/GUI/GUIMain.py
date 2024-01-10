@@ -1,12 +1,17 @@
+
+import sys
+import os
 import tkinter as tk
 from tkinter import ttk, simpledialog, messagebox
 from getpass import getpass
 from GUICrearSucursal import CrearSucursalApp
 from GUICrearCaja import CrearCajaApp
-import sys
-sys.path.append(r"C:\Users\Op_1111\Desktop\Codigos_GitHub\Homologacion_MP")
-from Class_MP.database import ConexionSybase
-from Class_MP.conexiones import Conexion_APP
+directorio_script = os.path.dirname(os.path.abspath(__file__))
+# Construir la ruta relativa al directorio que deseas agregar
+ruta_relativa = os.path.join(directorio_script, "..")
+sys.path.append(ruta_relativa)
+from database import ConexionSybase
+from conexiones import Conexion_APP
 
 class ConfigInicialMPQRCODE:
     def __init__(self):
@@ -17,8 +22,6 @@ class ConfigInicialMPQRCODE:
             password="gestion",
             database=r"I:\Misa\tentollini_DBA 2023-12-11 12;05;28\Dba\gestionh.db",
         )
-        self.ventanas_abiertas = []
-
         self.validar_password()
 
     def validar_password(self):
@@ -38,7 +41,6 @@ class ConfigInicialMPQRCODE:
                     gui_conexiones.crear_ventana_principal()
             else:
                 messagebox.showerror("Error", "Password incorrecto.")
-
         except Exception as e:
             messagebox.showerror("Error", f"Error: {str(e)}")
 
@@ -48,13 +50,8 @@ class ConfigInicialMPQRCODE:
         except Exception as e:
             messagebox.showerror("Error", f"Error al contar registros: {str(e)}")
 
-    def cerrar_ventanas(self):
-        for ventana in self.ventanas_abiertas:
-            ventana.destroy()
-
     def crear_interfaz(self):
         self.root = tk.Tk()
-        self.ventanas_abiertas.append(self.root)
         self.root.title("Configuración inicial MPQRCODE")
 
         style = ttk.Style()
@@ -73,7 +70,7 @@ class ConfigInicialMPQRCODE:
 
         self.root.columnconfigure(0, weight=1)
         self.root.columnconfigure(1, weight=1)
-        self.root.protocol("WM_DELETE_WINDOW", self.cerrar_ventanas)  # Vincular el cierre de la ventana
+        self.root.protocol("WM_DELETE_WINDOW", self.cerrar_ventana)  # Vincular el cierre de la ventana
 
         self.root.mainloop()
 
@@ -97,10 +94,11 @@ class ConfigInicialMPQRCODE:
             except Exception as e:
                 messagebox.showerror("Error", f"Error al insertar datos en la base de datos: {str(e)}")
 
+    def cerrar_ventana(self):
+        self.root.destroy()
 
-class GUIconexiones(tk.Tk):  # Deriva de tk.Tk
+class GUIconexiones:
     def __init__(self, conexionDBA):
-        super().__init__()
         self.conexionDBA = conexionDBA
         self.id_user = self.conexionDBA.specify_search("MPQRCODE_CLIENTE", 'idUSER', 1)
         self.token  = self.conexionDBA.specify_search("MPQRCODE_CLIENTE", 'AUTH_TOKEN', 1)
@@ -112,36 +110,29 @@ class GUIconexiones(tk.Tk):  # Deriva de tk.Tk
         self.ventana_principal = tk.Tk()
         self.ventana_principal.title("Menú Principal")
 
-        # Configurar el tamaño de los botones
         boton_config = {'width': 20}
         estilo = ttk.Style()
         estilo.configure("TButton", font=('Helvetica', 10))
 
-        # Botones para crear
         ttk.Button(self.ventana_principal, text="Crear Sucursal", command=self.crear_sucursal_app, **boton_config).grid(row=0, column=0, pady=5, sticky='nsew')
         ttk.Button(self.ventana_principal, text="Crear Caja", command=self.crear_caja_app, **boton_config).grid(row=1, column=0, pady=5, sticky='nsew')
         ttk.Button(self.ventana_principal, text="Crear Orden", command=self.mostrar_ventana_creacion_orden, **boton_config).grid(row=2, column=0, pady=5, sticky='nsew')
 
-        # Botones para eliminar
         ttk.Button(self.ventana_principal, text="Eliminar Sucursal", command=self.mostrar_ventana_creacion_orden, **boton_config).grid(row=0, column=1, pady=5, padx=5, sticky='nsew')
         ttk.Button(self.ventana_principal, text="Eliminar Caja", command=self.mostrar_ventana_creacion_orden, **boton_config).grid(row=1, column=1, pady=5, padx=5, sticky='nsew')
         ttk.Button(self.ventana_principal, text="Eliminar Orden", command=self.mostrar_ventana_creacion_orden, **boton_config).grid(row=2, column=1, pady=5, padx=5, sticky='nsew')
 
-        # Centrar los botones en medio de la ventana
         self.ventana_principal.columnconfigure(0, weight=1)
         self.ventana_principal.columnconfigure(1, weight=1)
         self.ventana_principal.rowconfigure([0, 1, 2], weight=1)
 
-        # Establecer el tamaño específico de la ventana
-        self.ventana_principal.geometry("500x250")  # Ajusta estos valores según tus necesidades
+        self.ventana_principal.geometry("500x250")
 
         self.ventana_principal.mainloop()            
-    
+
     def crear_sucursal_app(self):
         try:
-            # Crear una instancia de CrearSucursalApp
             crear_sucursal_app_instance = CrearSucursalApp(self.conexionAPI)
-            # Llamar al método create_widgets para inicializar las páginas
             crear_sucursal_app_instance.create_widgets()
         except Exception as e:
             messagebox.showerror("Error", f"Error al crear la instancia de CrearSucursalApp: {str(e)}")

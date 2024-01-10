@@ -1,6 +1,6 @@
 import sys
-sys.path.append(r"C:\Users\Op_1111\Desktop\Codigos_GitHub\Homologacion_MP")
-from Class_MP.Conexion_APIs_MP import Conexion_Api
+import os
+from Conexion_APIs_MP import Conexion_Api
 from datetime import datetime, timedelta
 import time
 
@@ -23,36 +23,37 @@ class Conexion_APP():
     def creacionSUC(self, datosSUC):
         try:
             response_MPQRCODE_RESPUESTA_SUCURSAL = self.conexionAPI.crear_sucursal(datosSUC)
-            MPQRCODE_RESPUESTA_SUCURSAL = response_MPQRCODE_RESPUESTA_SUCURSAL.json()
-            variable_iniciadora = MPQRCODE_RESPUESTA_SUCURSAL["id"]
-            nro_idINCREMET = self.conexionDBA.inicializar_tabla_MPQRCODE_SUCURSAL(variable_iniciadora)
-            nombre_tabla = "MPQRCODE_SUCURSAL"
-
-            # Recorre cada clave y valor en el JSON
-            for clave_json, valor_json in MPQRCODE_RESPUESTA_SUCURSAL.items():
-                if isinstance(valor_json, dict):
-                    if clave_json == 'business_hours':
-                        datos_business_hours = []
-                        idSUC = self.conexionDBA.obtener_valor_id_por_idincremet(nro_idINCREMET, nombre_tabla)
-                        for dia, horarios in valor_json.items():
-                            datos_business_hours.append(dia)
-                            for horario in horarios:
-                                datos_business_hours.append(horario)
-                            self.conexionDBA.insertar_datos_MPQRCODE_SUCURSAL_business_hours(idSUC, datos_business_hours[0], datos_business_hours[1]["open"], datos_business_hours[1]["close"])
-                            datos_business_hours.clear()
-                    elif clave_json == 'location':
-                        datos_location = []
-                        idSUC = self.conexionDBA.obtener_valor_id_por_idincremet(nro_idINCREMET, nombre_tabla)
-                        for clave, valor in valor_json.items():
-                            datos_location.append(valor)
-                        self.conexionDBA.insertar_datos_MPQRCODE_SUCURSAL_location(idSUC, datos_location[0], datos_location[1], datos_location[2], datos_location[3], datos_location[4], datos_location[5], datos_location[6], datos_location[7])
-                else:        
-                    #Llama a la función insertar_dato_en_tabla con los parámetros correspondientes
-                    self.conexionDBA.insertar_dato_en_tabla(nombre_tabla, clave_json, nro_idINCREMET, valor_json)
-            print("Se guardar todos los datos en el BDA")
-            return response_MPQRCODE_RESPUESTA_SUCURSAL
+            if response_MPQRCODE_RESPUESTA_SUCURSAL.status_code >= 200 and response_MPQRCODE_RESPUESTA_SUCURSAL.status_code < 300:
+                MPQRCODE_RESPUESTA_SUCURSAL = response_MPQRCODE_RESPUESTA_SUCURSAL.json()
+                variable_iniciadora = MPQRCODE_RESPUESTA_SUCURSAL["id"]
+                nro_idINCREMENT = self.conexionDBA.inicializar_tabla_MPQRCODE_SUCURSAL(variable_iniciadora)
+                nombre_tabla = "MPQRCODE_SUCURSAL"
+                # Recorre cada clave y valor en el JSON
+                for clave_json, valor_json in MPQRCODE_RESPUESTA_SUCURSAL.items():
+                    if isinstance(valor_json, dict):
+                        if clave_json == 'business_hours':
+                            datos_business_hours = []
+                            idSUC = self.conexionDBA.obtener_valor_id_por_idINCREMENT(nro_idINCREMENT, nombre_tabla)
+                            for dia, horarios in valor_json.items():
+                                datos_business_hours.append(dia)
+                                for horario in horarios:
+                                    datos_business_hours.append(horario)
+                                self.conexionDBA.insertar_datos_MPQRCODE_SUCURSAL_business_hours(idSUC, datos_business_hours[0], datos_business_hours[1]["open"], datos_business_hours[1]["close"])
+                                datos_business_hours.clear()
+                        elif clave_json == 'location':
+                            datos_location = []
+                            idSUC = self.conexionDBA.obtener_valor_id_por_idINCREMENT(nro_idINCREMENT, nombre_tabla)
+                            for clave, valor in valor_json.items():
+                                datos_location.append(valor)
+                            self.conexionDBA.insertar_datos_MPQRCODE_SUCURSAL_location(idSUC, datos_location[0], datos_location[1], datos_location[2], datos_location[3], datos_location[4], datos_location[5], datos_location[6], datos_location[7])
+                    else:        
+                        #Llama a la función insertar_dato_en_tabla con los parámetros correspondientes
+                        self.conexionDBA.insertar_dato_en_tabla(nombre_tabla, clave_json, nro_idINCREMENT, valor_json)
+                print("Se guardar todos los datos en el BDA")
+                return response_MPQRCODE_RESPUESTA_SUCURSAL
         except Exception as e:
             print(f"ERROR EN LA CREACION DE LA SUCURSAL: {str(e)}")
+            return response_MPQRCODE_RESPUESTA_SUCURSAL
     
     def eliminarSUC(self, external_IDSUC):
         valor_idSUC = self.conexionDBA.obtener_valor_id_por_external_id(external_IDSUC, "MPQRCODE_SUCURSAL")
@@ -99,22 +100,24 @@ class Conexion_APP():
             }
             print(datosPOS)
             MPQRCODE_RESPUESTA_CAJA = self.conexionAPI.crear_caja(datosPOS)
+            MPQRCODE_RESPUESTA_CAJA.txt
+            print(MPQRCODE_RESPUESTA_CAJA.txt)
             MPQRCODE_RESPUESTA_CAJA_JSON = MPQRCODE_RESPUESTA_CAJA.json()
             variable_iniciadora = MPQRCODE_RESPUESTA_CAJA_JSON["id"]
-            nro_idINCREMET = self.conexionDBA.inicializar_tabla_MPQRCODE_CAJAS(variable_iniciadora)
+            nro_idINCREMENT = self.conexionDBA.inicializar_tabla_MPQRCODE_CAJAS(variable_iniciadora)
                 
             for clave_json, valor_json in MPQRCODE_RESPUESTA_CAJA_JSON.items():
                 if isinstance(valor_json, dict):
                     if clave_json == "qr":
                         datos_qr = []
-                        idPOS = self.conexionDBA.obtener_valor_id_por_idincremet(nro_idINCREMET, nombre_tabla)
+                        idPOS = self.conexionDBA.obtener_valor_id_por_idINCREMENT(nro_idINCREMENT, nombre_tabla)
                         for clave_qr, valor_qr in valor_json.items():
                             datos_qr.append(valor_qr)
                         self.conexionDBA.insertar_datos_MPQRCODE_CAJAS_qr(idPOS, datos_qr[0], datos_qr[1], datos_qr[2])
                 else:
-                    self.conexionDBA.insertar_dato_en_tabla(nombre_tabla, clave_json, nro_idINCREMET, valor_json)
-            idPOS = self.conexionDBA.obtener_valor_id_por_idincremet(nro_idINCREMET, nombre_tabla)
-            external_pos_id = self.conexionDBA.obtener_valor_external_idPOS_por_idincremet(nro_idINCREMET, nombre_tabla)
+                    self.conexionDBA.insertar_dato_en_tabla(nombre_tabla, clave_json, nro_idINCREMENT, valor_json)
+            idPOS = self.conexionDBA.obtener_valor_id_por_idINCREMENT(nro_idINCREMENT, nombre_tabla)
+            external_pos_id = self.conexionDBA.obtener_valor_external_idPOS_por_idINCREMENT(nro_idINCREMENT, nombre_tabla)
             self.conexionDBA.insertar_datos_MPQRCODE_CAJAS_qrFALTANTE(external_pos_id, idPOS)
             print("Se guardar todos los datos en el BDA")
             return MPQRCODE_RESPUESTA_CAJA
@@ -145,10 +148,10 @@ class Conexion_APP():
         
         #/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
         #UNIÓN PARA CREAR ORDENES
-    def crearOrden(self, external_idPOS):
-        nro_factura = input("Ingrese el NRO de FACTURA: ")
+    def crearOrden(self, external_idPOS, nro_factura, sucNAME, monto_pagar, picture_url):
         tabla = 'MPQRCODE_CREARORDEN'
-        crear_ORDEN = self.conexionAPI.crear_orden(external_idPOS, nro_factura)
+        crear_ORDEN = self.conexionAPI.crear_orden(external_idPOS, nro_factura, sucNAME, monto_pagar, picture_url)
+        print(crear_ORDEN)
         if crear_ORDEN.status_code >= 200 and crear_ORDEN.status_code < 300:
             external_reference = None
             for clave_json, valor_json in crear_ORDEN.json().items():
@@ -160,14 +163,14 @@ class Conexion_APP():
                 'external_reference' : external_reference,
                 'date_creation': formato_fecha
             }
-            id_increment = self.conexionDBA.insertar_datos_obtener_idINCREMET(tabla, valor1)
+            id_increment = self.conexionDBA.insertar_datos_obtener_idINCREMENT(tabla, valor1)
             self.conexionDBA.insertar_dato_en_tabla(tabla, 'external_idPOS', id_increment, external_idPOS)
             try:
                 valor_DICT = {}
                 for clave_json, valor_json in crear_ORDEN.json().items():
                     if clave_json == 'items' and isinstance(valor_json, list):
                         # Tu código aquí si clave_json es 'items' y valor_json es una lista
-                        for recorre_lista in valor_json[1:]:  # Comienza desde el segundo elemento hasta el final
+                        for recorre_lista in valor_json:
                             valor_dictITEMS = {}
                             for clave_dict, valor_dict in recorre_lista.items():
                                 if clave_dict == 'id':
@@ -176,6 +179,7 @@ class Conexion_APP():
                                 else:
                                     valor_dictITEMS[clave_dict] = valor_dict
                             self.conexionDBA.insertar_datos_sin_obtener_id("MPQRCODE_CREARORDEN_items", valor_dictITEMS)
+                            print(valor_dictITEMS)
                     elif not isinstance(valor_json, (list, dict)) and not clave_json == 'external_reference':
                         valor_DICT[clave_json] = valor_json
                     else:
@@ -204,7 +208,7 @@ class Conexion_APP():
             'external_reference': external_reference,
             'external_idPOS': external_idPOS
         }
-        id_increment = self.conexionDBA.insertar_datos_obtener_idINCREMET("MPQRCODE_OBTENERPAGO", datos)
+        id_increment = self.conexionDBA.insertar_datos_obtener_idINCREMENT("MPQRCODE_OBTENERPAGO", datos)
 
         # Asegúrate de que obtienes la respuesta correctamente
         respuesta = self.conexionAPI.obtener_pago(id_pago)
