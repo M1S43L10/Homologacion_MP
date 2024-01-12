@@ -31,22 +31,34 @@ if __name__ == "__main__":
 #CONEXION A MODULO API
 app = ("1627358269", "APP_USR-8914848154505078-010809-0a345be95bb83eb5f90fa62663f7cad8-1627358269")
 instanciacion = Conexion_APP(app, conexion_sybase)
-"""
-instanciacion.limpieza_tabla_TOTALsucursal()
-instanciacion.limpieza_tabla_TOTALcaja()
-instanciacion.eliminarOrdenesPostDBA()
-"""
+
 #conexion_sybase.eliminar_tabla("MPQRCODE_CONEXIONPROGRAMAS")
 #conexion_sybase.crear_tabla_MPQRCODE_CONEXIONPROGRAMAS()
+"""
+datos = {
+    "nro_factura": "00000-11111111",
+    "tipo_factura": 1,
+    "monto_pagar": 1000,
+    "status": 0
+}
+
+conexion_sybase.insertar_datos_sin_obtener_id("MPQRCODE_CONEXIONPROGRAMAS", datos)
+"""
+
 
 """
 /*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*LIMPIEZA/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
-
 instanciacion.limpieza_tabla_sucursal()
 instanciacion.limpieza_tabla_caja()
-
-
+conexion_sybase.eliminar_tabla("MPQRCODE_CAJA")
+conexion_sybase.crear_tabla_MPQRCODE_CAJA()
 """
+"""
+instanciacion.limpieza_tabla_TOTALsucursal()
+instanciacion.limpieza_tabla_TOTALcaja()
+"""
+instanciacion.eliminarOrdenesPostDBA()
+
 
 """
 /*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*SUCURSAL/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
@@ -83,12 +95,20 @@ instanciacion.creacionSUC(datosSUC)
 #instanciacion.crearCaja("SUC001")
 
 #/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*CREAR ORDEN/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
-
+"""
 pago = instanciacion.crearOrden("SUC001POS001", "00000-1111111", "Changuito", 1000, "https://media.istockphoto.com/id/1205419959/es/vector/verduras-en-el-carro-de-la-compra-carrito-logotipo-icono-icono-vector-de-dise%C3%B1o.jpg?s=612x612&w=0&k=20&c=SFUApESf7KXEOLaVQrjUEihs0D8CJOy5nnqmDPQebGg=")
 id_pago = instanciacion.obteneridOrder(pago[0], pago[1])
 instanciacion.obtenerPago(id_pago, pago[0], pago[1])
+"""
+"""
+datos = {
+    'picture_url': "https://media.istockphoto.com/id/1205419959/es/vector/verduras-en-el-carro-de-la-compra-carrito-logotipo-icono-icono-vector-de-dise%C3%B1o.jpg?s=612x612&w=0&k=20&c=SFUApESf7KXEOLaVQrjUEihs0D8CJOy5nnqmDPQebGg="
+}
 
+conexion_sybase.actualizar_datos("MPQRCODE_CAJAS", datos, 1)
+"""
 
+#print(conexion_sybase.specify_search_condicion("MPQRCODE_SUCURSAL", 'name', 'external_id', 'SUC004'))
 """
 conexion_sybase.eliminar_tabla("MPQRCODE_CLIENTE")
 conexion_sybase.crear_tabla_MPQRCODE_CLIENTE()"""

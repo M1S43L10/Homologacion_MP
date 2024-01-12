@@ -6,6 +6,8 @@ from tkinter import ttk, simpledialog, messagebox
 from getpass import getpass
 from GUICrearSucursal import CrearSucursalApp
 from GUICrearCaja import CrearCajaApp
+from GUICrearOrden import CrearOrdenApp
+from GUIConfigCaja import ConfigurarCajaApp
 directorio_script = os.path.dirname(os.path.abspath(__file__))
 # Construir la ruta relativa al directorio que deseas agregar
 ruta_relativa = os.path.join(directorio_script, "..")
@@ -116,10 +118,10 @@ class GUIconexiones:
 
         ttk.Button(self.ventana_principal, text="Crear Sucursal", command=self.crear_sucursal_app, **boton_config).grid(row=0, column=0, pady=5, sticky='nsew')
         ttk.Button(self.ventana_principal, text="Crear Caja", command=self.crear_caja_app, **boton_config).grid(row=1, column=0, pady=5, sticky='nsew')
-        ttk.Button(self.ventana_principal, text="Crear Orden", command=self.mostrar_ventana_creacion_orden, **boton_config).grid(row=2, column=0, pady=5, sticky='nsew')
+        ttk.Button(self.ventana_principal, text="Crear Orden", command=self.crear_orden_app, **boton_config).grid(row=2, column=0, pady=5, sticky='nsew')
 
         ttk.Button(self.ventana_principal, text="Eliminar Sucursal", command=self.mostrar_ventana_creacion_orden, **boton_config).grid(row=0, column=1, pady=5, padx=5, sticky='nsew')
-        ttk.Button(self.ventana_principal, text="Eliminar Caja", command=self.mostrar_ventana_creacion_orden, **boton_config).grid(row=1, column=1, pady=5, padx=5, sticky='nsew')
+        ttk.Button(self.ventana_principal, text="Configurar Caja", command=self.config_orden_app, **boton_config).grid(row=1, column=1, pady=5, padx=5, sticky='nsew')
         ttk.Button(self.ventana_principal, text="Eliminar Orden", command=self.mostrar_ventana_creacion_orden, **boton_config).grid(row=2, column=1, pady=5, padx=5, sticky='nsew')
 
         self.ventana_principal.columnconfigure(0, weight=1)
@@ -143,6 +145,18 @@ class GUIconexiones:
         except Exception as e:
             print(f"Error: {e}")
             
+    def crear_orden_app(self):
+        try:
+            crear_orden_app_instance = CrearOrdenApp(self.conexionAPI, self.conexionDBA)
+        except Exception as e:
+                print(f"Error: {e}")
+                
+    def config_orden_app(self):
+        try:
+            config_orden_app_instance = ConfigurarCajaApp(self.conexionAPI, self.conexionDBA)
+        except Exception as e:
+                print(f"Error: {e}")
+    
     def mostrar_ventana_creacion_orden(self):
         # Código para la ventana de creación de orden
         pass

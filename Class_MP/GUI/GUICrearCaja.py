@@ -11,6 +11,7 @@ class CrearCajaApp:
         # Agregar ComboBox para elegir la sucursal
         self.label_sucursal = ttk.Label(self.ventana_creacion_caja, text="Selecciona la Sucursal:")
         self.label_sucursal.grid(row=0, column=0, padx=10, pady=5, sticky='w')
+        self.selected_external_id = tk.StringVar()
 
         # Obtener todos los External IDs de la tabla MPQRCODE_SUCURSAL
         external_ids = self.obtener_todos_los_external_id('MPQRCODE_SUCURSAL')
@@ -54,59 +55,55 @@ class CrearCajaApp:
         ttk.Label(ventana_pos, text="External ID del POS:").grid(row=2, column=0, padx=10, pady=5, sticky='w')
         entry_external_id_pos = ttk.Entry(ventana_pos)
         entry_external_id_pos.grid(row=2, column=1, padx=10, pady=5, sticky='ew')
+        
+        ttk.Label(ventana_pos, text="URL del IMG Sucursal:").grid(row=3, column=0, padx=10, pady=5, sticky='w')
+        entry_picturl_url = ttk.Entry(ventana_pos)
+        entry_picturl_url.grid(row=3, column=1, padx=10, pady=5, sticky='ew')
 
         # Botón para realizar la creación del POS
-        ttk.Button(ventana_pos, text="Crear POS", command=lambda: self.crear_pos(entry_nombre_pos.get(), entry_categoria_pos.get(), entry_external_id_pos.get())).grid(row=3, column=0, columnspan=2, pady=10)
+        ttk.Button(ventana_pos, text="Crear POS", command=lambda: self.crear_pos(entry_nombre_pos.get(), entry_categoria_pos.get(), entry_external_id_pos.get(), entry_picturl_url.get())).grid(row=4, column=0, columnspan=2, pady=10)
 
-    def crear_pos(self, nombre_pos, categoria_pos, external_id_pos):
+    def crear_pos(self, nombre_pos, categoria_pos, external_id_pos, picture__url):
         try:
-            external_store_id = self.selected_external_id.get()
+            external_store_id = self.combo_sucursal.get()
             external_id = external_store_id + external_id_pos
             datosPOS = [categoria_pos, external_id, nombre_pos]
+            
             # Crea una ventana modal de carga
             loading_window = tk.Toplevel()
             loading_window.title("Cargando...")
-            try:
-                # Crea una ventana modal de carga
-                loading_window = tk.Toplevel()
-                loading_window.title("Cargando...")
 
-                # Etiqueta para mostrar el mensaje
-                loading_label = ttk.Label(loading_window, text="Creando sucursal...")
-                loading_label.pack(padx=20, pady=10)
+            # Etiqueta para mostrar el mensaje
+            loading_label = ttk.Label(loading_window, text="Creando sucursal...")
+            loading_label.pack(padx=20, pady=10)
 
-                # Barra de progreso giratoria (indeterminada)
-                progressbar = ttk.Progressbar(loading_window, mode='indeterminate')
-                progressbar.pack(padx=20, pady=10)
-                progressbar.start()
+            # Barra de progreso giratoria (indeterminada)
+            progressbar = ttk.Progressbar(loading_window, mode='indeterminate')
+            progressbar.pack(padx=20, pady=10)
+            progressbar.start()
 
-                # Actualiza la interfaz para que se muestre la ventana de carga
-                self.ventana_creacion_caja.update_idletasks()
+            # Actualiza la interfaz para que se muestre la ventana de carga
+            self.ventana_creacion_caja.update_idletasks()
 
-                # Espera la respuesta
-                respuesta = self.conexionAPI.crearCaja(external_store_id, datosPOS)
+            # Espera la respuesta
+            respuesta = self.conexionAPI.crearCaja(external_store_id, datosPOS, picture__url)
 
-                if respuesta.status_code >= 200 and respuesta.status_code < 300:
+            if respuesta.status_code >= 200 and respuesta.status_code < 300:
+                try:
                     messagebox.showinfo("Éxito", "Caja creada con éxito.")
-                    self.ventana_creacion_caja.destroy()  # Cierra la ventana principal al crear con éxito
-                else:
-                    # Muestra detalles de error específicos
-                    error_message = f"Error al crear la sucursal. Verifica la respuesta.\n\n"
-                    error_message += self.get_api_error_message(respuesta)
-                    messagebox.showerror("Error", error_message)
-            except respuesta.status_code as api_error:
-                # Manejar excepciones específicas de la API
-                messagebox.showerror("Error", f"Error de la API: {str(api_error)}")
-
-            except Exception as e:
-                # Captura excepciones generales
-                messagebox.showerror("Error", f"Error al crear sucursal: {str(e)}")
-
-            finally:
-                # Cierra la ventana de carga independientemente del resultado
-                if loading_window:
-                    loading_window.destroy()
-
-            messagebox.showinfo("Éxito", "POS creado con éxito.")
+                    self.ventana_creacion_caja.destroy()
+                #DEFINIR BIEN LA LOGICA DE ERRORES CON conexiones.py
+                except Exception as e:
+                    if respuesta.status_code >= 300 and respuesta.status_code < 500:
+                        for clave_error, valor_error in respuesta:
+                            if clave_error == 'message':
+                                messagebox.showerror(f"Error {respuesta.status_code}", f"Error al crear sucursal: {valor_error}, {str(e)}")
+                    
         except Exception as e:
-            messagebox.showerror("Error", f"Error al crear el POS: {e}")
+            # Captura excepciones generales
+            messagebox.showerror("Error", f"Error al crear sucursal: {str(e)}")
+
+        finally:
+            # Cierra la ventana de carga independientemente del resultado
+            if loading_window:
+                loading_window.destroy()

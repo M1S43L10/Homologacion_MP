@@ -14,7 +14,7 @@ idMERCADERIA = 000001111122222
 Creé la tabla MPQRCODE_CONEXIONPROGRAMAS = asi son los valores de almacenamiento
 nro_factura VARCHAR(255) PRIMARY KEY,
 tipo_factura INT,
-monto_pagar MONEY,
+monto_pagar FLOAT,
 status BIT,
 response FLOAT,
 description VARCHAR(255)
@@ -26,4 +26,14 @@ ahora va a pedir nro_factura, monto_pagar, picture_url, que lo va pasar el GUI.
 
 RECORDATORIOS 
 Crear una funcion que pregunte a la tabla si el nro de factura ya existe registrado
-Una que guarde y almacene en que POS estamos trabajando
+Una que guarde y almacene en que POS estamos trabajando (REALIZADA)
+
+11-01-2024
+IDEA
+Cambair los botones de Eliminar x los de Configurar, que va abrir una nueva ventana, que seria bueno que mostrara las cajas
+o sucursales que ya tienen guardados y que presionando sobre uno de ellos, me permita editarlo o eliminarlo, tanto del dba como de MP
+
+RECORDATORIOS
+Trabajar para crear lo de crear orden. (EMPEZADO)
+Tambien lo de los errores de MP.
+

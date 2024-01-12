@@ -127,7 +127,7 @@ class Conexion_Api:
                     'picture_url': picture_url
                 }
             ],
-            "notification_url": "https://e0e7-186-122-104-145.ngrok-free.app/"
+            "notification_url": "https://91a8-186-122-104-145.ngrok-free.app/"
             }
         
         response = requests.post(url, headers=headers, data=json.dumps(payload))

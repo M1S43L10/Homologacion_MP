@@ -47,9 +47,10 @@ class ConexionSybase:
             self.conectar()
             query = f"""
                 CREATE TABLE MPQRCODE_CONEXIONPROGRAMAS (
+                    idINCREMENT INT IDENTITY,
                     nro_factura VARCHAR(255) PRIMARY KEY,
                     tipo_factura INT,
-                    monto_pagar MONEY,
+                    monto_pagar FLOAT,
                     status BIT,
                     response FLOAT,
                     description VARCHAR(255)
@@ -165,7 +166,7 @@ class ConexionSybase:
                     external_id VARCHAR(255), 
                     site VARCHAR(255), 
                     qr_code VARCHAR(255),
-                    picture__url VARCHAR(255)
+                    picture_url VARCHAR(255)
                 ) 
             """
             self.cursor.execute(query)
@@ -191,6 +192,26 @@ class ConexionSybase:
             self.cursor.execute(query)
             self.conexion.commit()
             print("Tabla MPQRCODE_CAJAS_qr creada con éxito.")
+        except Exception as e:
+            print(f"Error al crear la tabla: {e}")
+        finally:
+            self.desconectar()
+            
+    def crear_tabla_MPQRCODE_CAJA(self):
+        try:
+            self.conectar()
+            query = """
+                CREATE TABLE MPQRCODE_CAJA (
+                    idINCREMENT INT IDENTITY PRIMARY KEY,
+                    sucNAME VARCHAR(255),
+                    posNAME VARCHAR(255),
+                    external_id_pos VARCHAR(255),
+                    pictureURL VARCHAR(255)
+                )
+            """
+            self.cursor.execute(query)
+            self.conexion.commit()
+            print("Tabla MPQRCODE_CAJA creada con éxito.")
         except Exception as e:
             print(f"Error al crear la tabla: {e}")
         finally:
@@ -549,6 +570,21 @@ class ConexionSybase:
             print(f"Error al actualizar datos: {err}")
         finally:
             self.desconectar()
+            
+    def actualizar_datos_condicion(self, tabla, asignaciones, condicion, valor_condicion, nuevo_valor):
+        try:
+            self.conectar()
+            with self.conexion.cursor() as cursor:
+                consulta_update = f'UPDATE {tabla} SET {asignaciones} = ? WHERE {condicion} = ?'
+                cursor.execute(consulta_update, (nuevo_valor, valor_condicion))
+                self.conexion.commit()
+
+                print(f"Datos actualizados en la tabla '{tabla}' exitosamente.")
+
+        except pypyodbc.Error as err:
+            print(f"Error al actualizar datos: {err}")
+        finally:
+            self.desconectar()
 
 #/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ INSERTAR DATOS DE SUCURSAL #/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
     def inicializar_tabla_MPQRCODE_SUCURSAL(self, id):
@@ -750,6 +786,20 @@ class ConexionSybase:
         finally:
             self.desconectar()  # Asegúrate de desconectar incluso si hay un error
             
+    def obtener_todos_los_name(self, tabla):
+        try:
+            self.conectar()
+            with self.conexion.cursor() as cursor:
+                query = f"SELECT name FROM {tabla}"
+                cursor.execute(query)
+                resultados = cursor.fetchall()
+                return [resultado[0] for resultado in resultados]
+        except Exception as e:
+            print(f"Error al obtener los names: {e}")
+        finally:
+            self.desconectar()
+            
+            
     def obtener_todos_los_external_id(self, tabla):
         try:
             self.conectar()
@@ -759,9 +809,10 @@ class ConexionSybase:
                 resultados = cursor.fetchall()
                 return [resultado[0] for resultado in resultados]
         except Exception as e:
-            print(f"Error al obtener los EXTERNALS ID: {e}")
+            print(f"Error al obtener los external_ids: {e}")
         finally:
             self.desconectar()
+            
 
     def obtener_valor_id_por_idINCREMENT(self, idINCREMENT, nombre_tabla):
         try:
@@ -844,6 +895,44 @@ class ConexionSybase:
         except pypyodbc.Error as err:
             print(f"Error al obtener el valor de 'id': {err}")
             return None
+        
+    def specify_search_condicion(self, nombre_tabla, nombre_columna, condicion, valor_condicion):
+        try:
+            self.conectar()
+            with self.conexion.cursor() as cursor:
+                # Consulta para obtener el valor de la columna 'id' por 'condicion'
+                query = f"SELECT {nombre_columna} FROM {nombre_tabla} WHERE {condicion} = '{valor_condicion}'"
+                cursor.execute(query)
+                resultado = cursor.fetchone()
+
+                if resultado is not None:
+                    id_valor = resultado[0]
+                    return id_valor
+                else:
+                    return None
+        except pypyodbc.Error as err:
+            print(f"Error al obtener el valor de 'id': {err}")
+            return None
+        
+    def specify_search_all_columns(self, nombre_tabla, condicion, valor_condicion):
+        try:
+            self.conectar()
+            with self.conexion.cursor() as cursor:
+                # Consulta para obtener todos los valores de las columnas por 'condicion'
+                query = f"SELECT * FROM {nombre_tabla} WHERE {condicion} = '{valor_condicion}'"
+                cursor.execute(query)
+                resultado = cursor.fetchone()
+
+                if resultado is not None:
+                    # Convertir la fila de resultado a una lista
+                    valores = list(resultado)
+                    return valores
+                else:
+                    return None
+        except pypyodbc.Error as err:
+            print(f"Error al obtener los valores de las columnas: {err}")
+            return None
+
         
     def contar_registros(self, tabla):
         try:

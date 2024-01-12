@@ -64,8 +64,10 @@ class Conexion_APP():
             self.conexionDBA.eliminar_filas("MPQRCODE_SUCURSAL", "id", int(valor_idSUC))
             self.conexionDBA.desconectar()
             print("SUCURSAL ELIMINADA")
+            return True
         else:
             print("NO SE PUDO ELIMINAR LA SUCURSAL")
+            return False, respuesta
         
 
     
@@ -85,7 +87,7 @@ class Conexion_APP():
 
     #/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
     #UNION DE LAS CLASES Y FUNCIONES PARA LA CREACION DE LAS CAJAS PARA LAS SUCURSALES. Recorrer e insertar los datos
-    def crearCaja(self, id_externoSUC, datosLISTPOS):
+    def crearCaja(self, id_externoSUC, datosLISTPOS, picture__url):
         try:
             nombre_tabla = "MPQRCODE_CAJAS"
             #CREAR UNA VARIABLE EN EL CUAL SE PUEDA INGRESE EL external_id Y REEMPLAZARLAS en idSUC y MPQRCODE_RESPUESTA_CAJA
@@ -96,34 +98,41 @@ class Conexion_APP():
                 "external_store_id": id_externoSUC,
                 "fixed_amount": True,
                 "name": str(datosLISTPOS[2]),
-                "store_id": int(idSUC)
+                "store_id": int(idSUC),
             }
-            print(datosPOS)
             MPQRCODE_RESPUESTA_CAJA = self.conexionAPI.crear_caja(datosPOS)
-            MPQRCODE_RESPUESTA_CAJA.txt
-            print(MPQRCODE_RESPUESTA_CAJA.txt)
             MPQRCODE_RESPUESTA_CAJA_JSON = MPQRCODE_RESPUESTA_CAJA.json()
-            variable_iniciadora = MPQRCODE_RESPUESTA_CAJA_JSON["id"]
-            nro_idINCREMENT = self.conexionDBA.inicializar_tabla_MPQRCODE_CAJAS(variable_iniciadora)
-                
-            for clave_json, valor_json in MPQRCODE_RESPUESTA_CAJA_JSON.items():
-                if isinstance(valor_json, dict):
-                    if clave_json == "qr":
-                        datos_qr = []
-                        idPOS = self.conexionDBA.obtener_valor_id_por_idINCREMENT(nro_idINCREMENT, nombre_tabla)
-                        for clave_qr, valor_qr in valor_json.items():
-                            datos_qr.append(valor_qr)
-                        self.conexionDBA.insertar_datos_MPQRCODE_CAJAS_qr(idPOS, datos_qr[0], datos_qr[1], datos_qr[2])
-                else:
-                    self.conexionDBA.insertar_dato_en_tabla(nombre_tabla, clave_json, nro_idINCREMENT, valor_json)
-            idPOS = self.conexionDBA.obtener_valor_id_por_idINCREMENT(nro_idINCREMENT, nombre_tabla)
-            external_pos_id = self.conexionDBA.obtener_valor_external_idPOS_por_idINCREMENT(nro_idINCREMENT, nombre_tabla)
-            self.conexionDBA.insertar_datos_MPQRCODE_CAJAS_qrFALTANTE(external_pos_id, idPOS)
-            print("Se guardar todos los datos en el BDA")
-            return MPQRCODE_RESPUESTA_CAJA
-                
+            print(MPQRCODE_RESPUESTA_CAJA_JSON)
+            if MPQRCODE_RESPUESTA_CAJA.status_code >= 200 and MPQRCODE_RESPUESTA_CAJA.status_code < 300:
+                variable_iniciadora = MPQRCODE_RESPUESTA_CAJA_JSON["id"]
+                nro_idINCREMENT = self.conexionDBA.inicializar_tabla_MPQRCODE_CAJAS(variable_iniciadora)
+                picture__urldatos = {
+                    'external_store_id': id_externoSUC,
+                    'picture_url': picture__url
+                }
+                self.conexionDBA.actualizar_datos("MPQRCODE_CAJAS", picture__urldatos, nro_idINCREMENT)
+                for clave_json, valor_json in MPQRCODE_RESPUESTA_CAJA_JSON.items():
+                    if isinstance(valor_json, dict):
+                        if clave_json == "qr":
+                            datos_qr = []
+                            idPOS = self.conexionDBA.obtener_valor_id_por_idINCREMENT(nro_idINCREMENT, nombre_tabla)
+                            for clave_qr, valor_qr in valor_json.items():
+                                datos_qr.append(valor_qr)
+                            self.conexionDBA.insertar_datos_MPQRCODE_CAJAS_qr(idPOS, datos_qr[0], datos_qr[1], datos_qr[2])
+                    else:
+                        self.conexionDBA.insertar_dato_en_tabla(nombre_tabla, clave_json, nro_idINCREMENT, valor_json)
+                idPOS = self.conexionDBA.obtener_valor_id_por_idINCREMENT(nro_idINCREMENT, nombre_tabla)
+                external_pos_id = self.conexionDBA.obtener_valor_external_idPOS_por_idINCREMENT(nro_idINCREMENT, nombre_tabla)
+                self.conexionDBA.insertar_datos_MPQRCODE_CAJAS_qrFALTANTE(external_pos_id, idPOS)
+                print("Se guardar todos los datos en el BDA")
+                return MPQRCODE_RESPUESTA_CAJA
+            else:
+                return MPQRCODE_RESPUESTA_CAJA_JSON
+        
+        #DEFINIR BIEN LA LOGICA CON GUICrearCaja.py
         except Exception as e:
             print(f"ERROR EN LA CREACION DE LA SUCURSAL: {e}")
+            return MPQRCODE_RESPUESTA_CAJA_JSON
             
     def eliminarCaja(self, valor_external_id):
         valor_idPOS = self.conexionDBA.obtener_valor_id_por_external_id(valor_external_id, "MPQRCODE_CAJAS")
@@ -261,8 +270,18 @@ class Conexion_APP():
         status_detail = self.conexionDBA.specify_search("MPQRCODE_OBTENERPAGO", 'status_detail', id_increment)
         if status == 'approved' and status_detail == 'accredited':
             print("PAGO REALIZADO")
+            return True
         else:
             print("NO SE PUDO OBTENER EL PAGO")
+            return False
+            
+            
+    def crearOrdenFULL(self, external_id_pos, nroFactura, sucNAME, montoPagar, pictureURL):
+        pago = self.crearOrden(external_id_pos, nroFactura, sucNAME, montoPagar, pictureURL)
+        id_pago = self.obteneridOrder(pago[0], pago[1])
+        respuesta = self.obtenerPago(id_pago, pago[0], pago[1])
+        return respuesta
+                
             
     def eliminarOrdenesPostDBA(self):
         try:
@@ -274,5 +293,12 @@ class Conexion_APP():
             self.conexionDBA.crear_tabla_MPQRCODE_CREARORDEN_items()
             self.conexionDBA.crear_tabla_MPQRCODE_RESPUESTAPOST()
             self.conexionDBA.crear_tabla_MPQRCODE_OBTENERPAGO()
+        except Exception as e:
+            print(f"Eror: {e}")
+            
+    def eliminarConexionesDBA(self):
+        try:
+            self.conexionDBA.eliminar_tabla("MPQRCODE_CAJA")
+            self.conexionDBA.crear_tabla_MPQRCODE_CAJA()
         except Exception as e:
             print(f"Eror: {e}")
