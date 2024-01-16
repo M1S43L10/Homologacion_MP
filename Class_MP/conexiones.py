@@ -209,7 +209,7 @@ class Conexion_APP():
                 print("Esperando confirmación del pago...")
                 time.sleep(5)  # Puedes ajustar el tiempo de espera según sea necesario
         print("Pago Realizado. ID obtenido:", obtener_ID[0])
-        return obtener_ID[0]
+        return obtener_ID[0], True
         
     def obtenerPago(self, id_pago, external_reference, external_idPOS):
         print("BUSCANDO STATUS DEL PAGO: ")
@@ -296,7 +296,7 @@ class Conexion_APP():
         except Exception as e:
             print(f"Eror: {e}")
             
-    def eliminarConexionesDBA(self):
+    def eliminarCAJADBA(self):
         try:
             self.conexionDBA.eliminar_tabla("MPQRCODE_CAJA")
             self.conexionDBA.crear_tabla_MPQRCODE_CAJA()

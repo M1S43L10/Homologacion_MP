@@ -50,10 +50,11 @@ conexion_sybase.insertar_datos_sin_obtener_id("MPQRCODE_CONEXIONPROGRAMAS", dato
 /*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*LIMPIEZA/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
 instanciacion.limpieza_tabla_sucursal()
 instanciacion.limpieza_tabla_caja()
-conexion_sybase.eliminar_tabla("MPQRCODE_CAJA")
-conexion_sybase.crear_tabla_MPQRCODE_CAJA()
 """
 """
+
+instanciacion.eliminarCAJADBA()
+
 instanciacion.limpieza_tabla_TOTALsucursal()
 instanciacion.limpieza_tabla_TOTALcaja()
 """
@@ -111,9 +112,8 @@ conexion_sybase.actualizar_datos("MPQRCODE_CAJAS", datos, 1)
 #print(conexion_sybase.specify_search_condicion("MPQRCODE_SUCURSAL", 'name', 'external_id', 'SUC004'))
 """
 conexion_sybase.eliminar_tabla("MPQRCODE_CLIENTE")
-conexion_sybase.crear_tabla_MPQRCODE_CLIENTE()"""
-
-
+conexion_sybase.crear_tabla_MPQRCODE_CLIENTE()
+"""
 #conexion_sybase.eliminar_filas("MPQRCODE_SUCURSAL", "id", 59270546)
 
 

@@ -118,7 +118,7 @@ class GUIconexiones:
 
         ttk.Button(self.ventana_principal, text="Crear Sucursal", command=self.crear_sucursal_app, **boton_config).grid(row=0, column=0, pady=5, sticky='nsew')
         ttk.Button(self.ventana_principal, text="Crear Caja", command=self.crear_caja_app, **boton_config).grid(row=1, column=0, pady=5, sticky='nsew')
-        ttk.Button(self.ventana_principal, text="Crear Orden", command=self.crear_orden_app, **boton_config).grid(row=2, column=0, pady=5, sticky='nsew')
+        ttk.Button(self.ventana_principal, text="Ordenes", command=self.crear_orden_app, **boton_config).grid(row=2, column=0, pady=5, sticky='nsew')
 
         ttk.Button(self.ventana_principal, text="Eliminar Sucursal", command=self.mostrar_ventana_creacion_orden, **boton_config).grid(row=0, column=1, pady=5, padx=5, sticky='nsew')
         ttk.Button(self.ventana_principal, text="Configurar Caja", command=self.config_orden_app, **boton_config).grid(row=1, column=1, pady=5, padx=5, sticky='nsew')
